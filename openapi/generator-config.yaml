@@ -1,0 +1,136 @@
+# OpenAPI Generator 7.x Configuration
+# ====================================
+# Configuration for multi-language SDK generation from gw-efactures-openapi.yaml.
+# Run with: openapi-generator-cli generate -c generator-config.yaml
+#
+# Documentation: https://openapi-generator.tech/docs/configuration/
+
+# ---------------------------------------------------------------------------
+# Global options (shared across all language generators)
+# ---------------------------------------------------------------------------
+global:
+  inputSpec: ./gw-efactures-openapi.yaml
+  # Files and directories to preserve during regeneration
+  # (custom code written by users is never overwritten)
+  filesPreservedOnRegeneration:
+    - "custom/"
+    - "*_custom.*"
+  # Template base directory for custom Mustache overrides
+  templateDir: ./templates
+  # Enable strict validation of the spec before generation
+  validateSpec: true
+  # Generation timeout per language (seconds)
+  timeoutSeconds: 120
+  # Additional properties applied to all generators
+  additionalProperties:
+    hideGenerationTimestamp: true
+    sortModelPropertiesByRequiredFlag: true
+    sortParamsByRequiredFlag: true
+    enumPropertyNaming: UPPERCASE
+
+# ---------------------------------------------------------------------------
+# Per-language generator configurations
+# ---------------------------------------------------------------------------
+generators:
+  # -------------------------------------------------------------------------
+  # Python 3.11+
+  # -------------------------------------------------------------------------
+  python:
+    generatorName: python
+    outputDir: ../python/generated
+    additionalProperties:
+      packageName: orwin_sdk
+      projectName: orwin-sdk
+      packageVersion: 0.1.0
+      pythonVersion: "3.11"
+      library: httpx
+      generateSourceCodeOnly: false
+      useOneOfDiscriminatorLookup: true
+    typeMappings:
+      DateTime: datetime
+      UUID: uuid.UUID
+    importMappings:
+      datetime: datetime
+      UUID: uuid
+    # Preserve custom files in these directories
+    preservePatterns:
+      - "orwin_sdk/custom/**"
+      - "orwin_sdk/**/*_custom.py"
+    # Post-generation commands
+    postGeneration:
+      - "python -m mypy --strict ."
+      - "python -m ruff check ."
+      - "python -m twine check dist/*"
+
+  # -------------------------------------------------------------------------
+  # TypeScript (Node.js)
+  # -------------------------------------------------------------------------
+  typescript:
+    generatorName: typescript-fetch
+    outputDir: ../typescript/generated
+    additionalProperties:
+      npmName: "@orwin/sdk"
+      npmVersion: 0.1.0
+      supportsES6: true
+      typescriptThreePlus: true
+      withInterfaces: true
+      useSingleRequestParameter: false
+      prefixParameterInterfaces: false
+      enumPropertyNaming: UPPERCASE
+    # Preserve custom files in these directories
+    preservePatterns:
+      - "src/custom/**"
+      - "src/**/*_custom.ts"
+    # Post-generation commands
+    postGeneration:
+      - "npx tsc --strict --noEmit"
+      - "npm publish --dry-run"
+
+  # -------------------------------------------------------------------------
+  # Java 17+
+  # -------------------------------------------------------------------------
+  java:
+    generatorName: java
+    outputDir: ../java/generated
+    additionalProperties:
+      groupId: io.orwin
+      artifactId: orwin-sdk
+      artifactVersion: 0.1.0
+      apiPackage: io.orwin.sdk.api
+      modelPackage: io.orwin.sdk.model
+      invokerPackage: io.orwin.sdk
+      library: native
+      java8: false
+      dateLibrary: java8
+      useJakartaEe: true
+      openApiNullable: true
+      serializationLibrary: jackson
+    # Preserve custom files in these directories
+    preservePatterns:
+      - "src/main/java/io/orwin/sdk/custom/**"
+      - "src/**/*Custom.java"
+    # Post-generation commands
+    postGeneration:
+      - "mvn compile -q"
+      - "mvn verify -q"
+
+  # -------------------------------------------------------------------------
+  # C (C99 / C++17)
+  # -------------------------------------------------------------------------
+  c:
+    generatorName: c
+    outputDir: ../c/generated
+    additionalProperties:
+      projectName: orwin-sdk
+      packageVersion: 0.1.0
+      hideGenerationTimestamp: true
+    # Preserve custom files in these directories
+    preservePatterns:
+      - "custom/**"
+      - "src/*_custom.c"
+      - "include/orwin/*_custom.h"
+    # Post-generation commands
+    postGeneration:
+      - "cmake -B build -DCMAKE_C_STANDARD=99 -DCMAKE_C_FLAGS='-Wall -Werror'"
+      - "cmake --build build"
+      - "conan export . orwin-sdk/0.1.0@"

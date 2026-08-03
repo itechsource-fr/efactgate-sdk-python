@@ -1,0 +1,608 @@
+openapi: 3.1.0
+info:
+  title: GW-eFactures — API Universelle
+  summary: Passerelle universelle de e-facturation B2B et e-reporting B2C
+  description: |
+    ## Présentation
+
+    GW-eFactures est la passerelle universelle de e-facturation (B2B) et e-reporting (B2C)
+    de la plateforme Orwin. Elle connecte les logiciels métiers (ERP, CRM, e-commerce) aux
+    logiciels comptables et plateformes agréées (PA/PPF) via une API REST unique.
+
+    ## Fonctionnalités principales
+
+    - **Factures B2B** : soumission au format UBL, CII ou Factur-X
+    - **e-Reporting B2C** : agrégation et transmission au PPF
+    - **Import fichiers** : CSV, XML UBL/CII, PDF Factur-X
+    - **Suivi complet** : statuts, transitions, accusés de réception (ACK)
+    - **Retry résilient** : backoff exponentiel (1 min → 48 h)
+
+    ## Authentification
+
+    Les endpoints nécessitent une authentification API Key (`X-API-Key`) ou
+    OAuth2 Bearer token (flux `client_credentials`).
+
+    ## Contact
+
+    Pour toute question technique : [api@orwin.fr](mailto:api@orwin.fr)
+  version: 0.1.0
+  contact:
+    name: Orwin — Équipe GW-eFactures
+    url: https://orwin.fr/gw-efactures
+    email: api@orwin.fr
+  license:
+    name: Propriétaire
+    url: https://orwin.fr/legal/licence
+
+servers:
+  - url: https://api.orwin.fr/gw-efactures
+    description: Production
+  - url: https://sandbox.orwin.fr/gw-efactures
+    description: Sandbox (tests et développement)
+
+security:
+  - apiKey: []
+  - oauth2: []
+
+tags:
+  - name: invoices
+    description: Soumission de factures B2B et suivi de flux.
+  - name: ereporting
+    description: Soumission de données e-reporting B2C.
+  - name: batch
+    description: Soumission en lot de documents (factures et e-reporting).
+  - name: import
+    description: Import de fichiers de factures (CSV, XML, PDF).
+  - name: status
+    description: Récupération du statut d'un flux.
+  - name: ack
+    description: Récupération des accusés de réception (ACK).
+
+paths:
+  /invoices:
+    post:
+      operationId: submitInvoice
+      summary: Soumettre une facture B2B
+      description: |
+        Soumet une facture B2B unitaire à la passerelle. Le contenu peut être
+        au format UBL, CII, Factur-X ou JSON Orwin.
+      tags:
+        - invoices
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/InvoiceSubmission"
+      responses:
+        "201":
+          description: Facture soumise avec succès. Retourne l'identifiant du flux créé.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FluxCreatedResponse"
+        "400":
+          description: Données de facture invalides (champs manquants ou format incorrect).
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "401":
+          description: Authentification requise ou invalide.
+        "429":
+          description: Trop de requêtes — réessayez après le délai indiqué.
+        "500":
+          description: Erreur interne du serveur.
+
+  /ereporting:
+    post:
+      operationId: submitEReporting
+      summary: Soumettre une déclaration e-reporting B2C
+      description: |
+        Soumet une déclaration e-reporting B2C unitaire. Les données sont
+        transmises au PPF après validation.
+      tags:
+        - ereporting
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/EReportingSubmission"
+      responses:
+        "201":
+          description: Déclaration e-reporting soumise avec succès.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FluxCreatedResponse"
+        "400":
+          description: Données e-reporting invalides.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "401":
+          description: Authentification requise ou invalide.
+        "429":
+          description: Trop de requêtes.
+        "500":
+          description: Erreur interne du serveur.
+
+  /batch:
+    post:
+      operationId: submitBatch
+      summary: Soumettre un lot de documents
+      description: |
+        Soumet un lot de 1 à 1000 documents (factures B2B et/ou e-reporting B2C)
+        en une seule requête.
+      tags:
+        - batch
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - documents
+              properties:
+                documents:
+                  type: array
+                  minItems: 1
+                  maxItems: 1000
+                  items:
+                    oneOf:
+                      - $ref: "#/components/schemas/InvoiceSubmission"
+                      - $ref: "#/components/schemas/EReportingSubmission"
+                  description: Liste de documents à soumettre (factures ou e-reporting).
+      responses:
+        "201":
+          description: Lot soumis avec succès.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BatchResponse"
+        "400":
+          description: Lot invalide (documents non conformes ou limite dépassée).
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "401":
+          description: Authentification requise ou invalide.
+        "429":
+          description: Trop de requêtes.
+        "500":
+          description: Erreur interne du serveur.
+
+  /import/{format}:
+    post:
+      operationId: importFile
+      summary: Importer un fichier de factures
+      description: |
+        Importe un fichier de factures au format spécifié. Chaque ligne ou section
+        du fichier produit un flux distinct. Le rapport d'import détaille les
+        flux créés et les erreurs rencontrées.
+      tags:
+        - import
+      parameters:
+        - name: format
+          in: path
+          required: true
+          description: Format du fichier importé.
+          schema:
+            $ref: "#/components/schemas/ImportFormat"
+      requestBody:
+        required: true
+        content:
+          application/octet-stream:
+            schema:
+              type: string
+              format: binary
+      responses:
+        "200":
+          description: Import terminé. Le rapport détaille les résultats.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ImportReport"
+        "400":
+          description: Format de fichier non reconnu ou fichier corrompu.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "401":
+          description: Authentification requise ou invalide.
+        "429":
+          description: Trop de requêtes.
+        "500":
+          description: Erreur interne du serveur.
+
+  /status/{flux_id}:
+    get:
+      operationId: getStatus
+      summary: Récupérer le statut d'un flux
+      description: |
+        Retourne le statut courant d'un flux, son historique de transitions
+        et les métadonnées associées.
+      tags:
+        - status
+      parameters:
+        - name: flux_id
+          in: path
+          required: true
+          description: Identifiant unique du flux (UUID).
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "200":
+          description: Statut du flux trouvé.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FluxStatusResponse"
+        "401":
+          description: Authentification requise ou invalide.
+        "404":
+          description: Flux non trouvé ou n'appartenant pas au tenant courant.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "500":
+          description: Erreur interne du serveur.
+
+  /ack/{flux_id}:
+    get:
+      operationId: getAck
+      summary: Récupérer l'accusé de réception d'un flux
+      description: |
+        Retourne l'accusé de réception (ACK) retourné par la cible pour le flux
+        spécifié. Retourne 204 si l'ACK n'est pas encore disponible.
+      tags:
+        - ack
+      parameters:
+        - name: flux_id
+          in: path
+          required: true
+          description: Identifiant unique du flux (UUID).
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "200":
+          description: Accusé de réception disponible.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AckResponse"
+        "204":
+          description: Accusé de réception non encore disponible.
+        "401":
+          description: Authentification requise ou invalide.
+        "404":
+          description: Flux non trouvé ou n'appartenant pas au tenant courant.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "500":
+          description: Erreur interne du serveur.
+
+components:
+  securitySchemes:
+    apiKey:
+      type: apiKey
+      in: header
+      name: X-API-Key
+      description: |
+        Clé API fournie lors de l'enregistrement de l'entreprise.
+        Alternative au Bearer token OAuth2.
+    oauth2:
+      type: oauth2
+      description: |
+        Authentification OAuth2 via le flux client_credentials.
+        Le token obtenu est transmis dans le header Authorization.
+      flows:
+        clientCredentials:
+          tokenUrl: https://auth.orwin.fr/oauth2/token
+          scopes:
+            invoices:write: Soumettre des factures et e-reporting
+            invoices:read: Lire les statuts et accusés de réception
+            batch:write: Soumettre des lots de documents
+            import:write: Importer des fichiers
+
+  schemas:
+    # -------------------------------------------------------------------------
+    # Enums
+    # -------------------------------------------------------------------------
+    InvoiceFormat:
+      type: string
+      description: Supported invoice document formats.
+      enum:
+        - ubl
+        - cii
+        - factur_x
+        - orwin_json
+
+    FluxType:
+      type: string
+      description: Type of flux submitted through the gateway.
+      enum:
+        - b2b_invoice
+        - b2c_ereporting
+
+    FluxStatus:
+      type: string
+      description: Status of a flux in its lifecycle.
+      enum:
+        - emis
+        - en_transit
+        - accepte
+        - rejete
+        - echoue
+
+    ImportFormat:
+      type: string
+      description: Supported file import formats.
+      enum:
+        - csv
+        - xml_ubl
+        - xml_cii
+        - pdf_factur_x
+
+    # -------------------------------------------------------------------------
+    # Request models
+    # -------------------------------------------------------------------------
+    InvoiceSubmission:
+      type: object
+      description: Data required to submit a B2B invoice.
+      required:
+        - content
+        - format
+        - target_connector_id
+        - enterprise_siret
+      properties:
+        content:
+          type: string
+          description: Base64-encoded content or JSON string of the invoice.
+        format:
+          $ref: "#/components/schemas/InvoiceFormat"
+        target_connector_id:
+          type: string
+          description: Identifier of the target connector.
+        enterprise_siret:
+          type: string
+          pattern: "^\\d{14}$"
+          description: 14-digit SIRET number (Luhn-valid).
+        flux_type:
+          $ref: "#/components/schemas/FluxType"
+          default: b2b_invoice
+        metadata:
+          type: object
+          additionalProperties:
+            type: string
+          description: Optional key-value metadata.
+          nullable: true
+
+    EReportingSubmission:
+      type: object
+      description: Data required to submit a B2C e-Reporting document.
+      required:
+        - content
+        - format
+        - enterprise_siret
+      properties:
+        content:
+          type: string
+          description: Base64-encoded content or JSON string of the e-Reporting data.
+        format:
+          $ref: "#/components/schemas/InvoiceFormat"
+        enterprise_siret:
+          type: string
+          pattern: "^\\d{14}$"
+          description: 14-digit SIRET number (Luhn-valid).
+        metadata:
+          type: object
+          additionalProperties:
+            type: string
+          description: Optional key-value metadata.
+          nullable: true
+
+    # -------------------------------------------------------------------------
+    # Response models
+    # -------------------------------------------------------------------------
+    FluxCreatedResponse:
+      type: object
+      description: Response returned when a document is successfully submitted.
+      required:
+        - flux_id
+        - status
+        - submitted_at
+      properties:
+        flux_id:
+          type: string
+          format: uuid
+          description: Unique identifier of the created flux.
+        status:
+          $ref: "#/components/schemas/FluxStatus"
+        submitted_at:
+          type: string
+          format: date-time
+          description: UTC timestamp of submission (ISO 8601).
+
+    BatchResponse:
+      type: object
+      description: Response returned for batch submissions.
+      required:
+        - flux_ids
+        - total_submitted
+        - total_errors
+      properties:
+        flux_ids:
+          type: array
+          items:
+            type: string
+            format: uuid
+          description: List of flux identifiers created.
+        total_submitted:
+          type: integer
+          minimum: 0
+          description: Number of documents successfully submitted.
+        total_errors:
+          type: integer
+          minimum: 0
+          description: Number of documents that failed validation.
+
+    FluxStatusResponse:
+      type: object
+      description: Response returned when querying a flux status.
+      required:
+        - flux_id
+        - status
+        - flux_type
+        - submitted_at
+        - transitions
+      properties:
+        flux_id:
+          type: string
+          format: uuid
+          description: Unique identifier of the flux.
+        status:
+          $ref: "#/components/schemas/FluxStatus"
+        flux_type:
+          $ref: "#/components/schemas/FluxType"
+        submitted_at:
+          type: string
+          format: date-time
+          description: UTC timestamp of original submission.
+        transitions:
+          type: array
+          items:
+            $ref: "#/components/schemas/TransitionDetail"
+          description: Ordered list of status transitions.
+
+    TransitionDetail:
+      type: object
+      description: A single status transition in a flux lifecycle.
+      required:
+        - from_status
+        - to_status
+        - reason
+        - transitioned_at
+      properties:
+        from_status:
+          $ref: "#/components/schemas/FluxStatus"
+        to_status:
+          $ref: "#/components/schemas/FluxStatus"
+        reason:
+          type: string
+          description: Description of why the transition occurred.
+        transitioned_at:
+          type: string
+          format: date-time
+          description: UTC timestamp of the transition.
+
+    AckResponse:
+      type: object
+      description: Acknowledgement response from a target connector.
+      required:
+        - flux_id
+        - ack_payload
+        - received_at
+      properties:
+        flux_id:
+          type: string
+          format: uuid
+          description: Unique identifier of the acknowledged flux.
+        ack_payload:
+          type: object
+          additionalProperties: true
+          description: Structured payload of the acknowledgement.
+        received_at:
+          type: string
+          format: date-time
+          description: UTC timestamp when the ACK was received.
+
+    ImportReport:
+      type: object
+      description: Report returned after a file import operation.
+      required:
+        - total_created
+        - total_errors
+        - errors
+      properties:
+        total_created:
+          type: integer
+          minimum: 0
+          description: Number of flux successfully created from the file.
+        total_errors:
+          type: integer
+          minimum: 0
+          description: Number of errors encountered during import.
+        errors:
+          type: array
+          items:
+            $ref: "#/components/schemas/ImportErrorDetail"
+          description: Detailed list of import errors.
+
+    ImportErrorDetail:
+      type: object
+      description: Describes an error encountered during file import.
+      required:
+        - line_or_section
+        - code
+        - message
+      properties:
+        line_or_section:
+          type: string
+          description: Identifier of the line or section where the error occurred.
+        code:
+          type: string
+          description: Machine-readable error code.
+        message:
+          type: string
+          description: Human-readable description of the error.
+
+    # -------------------------------------------------------------------------
+    # Error model
+    # -------------------------------------------------------------------------
+    ErrorResponse:
+      type: object
+      description: Standard error response returned by the API.
+      required:
+        - error_code
+        - message
+      properties:
+        error_code:
+          type: string
+          description: Machine-readable error code (e.g., VALIDATION_ERROR, NOT_FOUND).
+        message:
+          type: string
+          description: Human-readable error description.
+        details:
+          type: array
+          items:
+            $ref: "#/components/schemas/FieldErrorDetail"
+          description: Optional list of field-level errors.
+
+    FieldErrorDetail:
+      type: object
+      description: Details about a specific field validation error.
+      required:
+        - field
+        - code
+        - message
+      properties:
+        field:
+          type: string
+          description: JSON path of the invalid field (e.g., "enterprise_siret").
+        code:
+          type: string
+          description: Machine-readable error code for this field.
+        message:
+          type: string
+          description: Human-readable explanation of the error.
