@@ -5,7 +5,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from decimal import Decimal
 
-from orwin_sdk.exceptions import FieldError
+from efactgate_sdk.exceptions import FieldError
 
 # Tolerance for floating-point comparisons on amounts (±0.01€)
 _TOLERANCE = Decimal("0.01")

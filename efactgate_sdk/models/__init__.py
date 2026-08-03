@@ -1,20 +1,20 @@
-"""Data models for the Orwin SDK Client.
+"""Data models for the Efactgate SDK Client.
 
 Re-exports all model classes and enumerations for convenient access.
 """
 
-from orwin_sdk.models.ack import AckResponse
-from orwin_sdk.models.enums import FluxStatus, FluxType, ImportFormat, InvoiceFormat
-from orwin_sdk.models.ereporting import EReportingSubmission
-from orwin_sdk.models.errors import ErrorResponse, FieldError
-from orwin_sdk.models.invoice import (
+from efactgate_sdk.models.ack import AckResponse
+from efactgate_sdk.models.enums import FluxStatus, FluxType, ImportFormat, InvoiceFormat
+from efactgate_sdk.models.ereporting import EReportingSubmission
+from efactgate_sdk.models.errors import ErrorResponse, FieldError
+from efactgate_sdk.models.invoice import (
     BatchResponse,
     FluxCreatedResponse,
     ImportErrorDetail,
     ImportReport,
     InvoiceSubmission,
 )
-from orwin_sdk.models.status import FluxStatusResponse, TransitionDetail
+from efactgate_sdk.models.status import FluxStatusResponse, TransitionDetail
 
 __all__ = [
     "AckResponse",

@@ -9,9 +9,9 @@ Public API:
 - InvoiceLine, InvoiceAmounts: intermediate models for amount validation.
 """
 
-from orwin_sdk.validation.amounts import InvoiceAmounts, InvoiceLine, validate_amounts
-from orwin_sdk.validation.invoice import validate, validate_invoice_with_amounts
-from orwin_sdk.validation.siret import validate_siret
+from efactgate_sdk.validation.amounts import InvoiceAmounts, InvoiceLine, validate_amounts
+from efactgate_sdk.validation.invoice import validate, validate_invoice_with_amounts
+from efactgate_sdk.validation.siret import validate_siret
 
 __all__ = [
     "InvoiceAmounts",

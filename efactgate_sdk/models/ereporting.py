@@ -1,4 +1,4 @@
-"""E-Reporting submission model for the Orwin SDK Client."""
+"""E-Reporting submission model for the Efactgate SDK Client."""
 
 from __future__ import annotations
 
@@ -6,7 +6,7 @@ from dataclasses import dataclass
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from orwin_sdk.models.enums import InvoiceFormat
+    from efactgate_sdk.models.enums import InvoiceFormat
 
 
 @dataclass(frozen=True, slots=True)

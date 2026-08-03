@@ -21,9 +21,9 @@ import pytest
 from hypothesis import HealthCheck, given, settings
 from hypothesis import strategies as st
 
-from orwin_sdk.auth.api_key import ApiKeyAuthenticator
-from orwin_sdk.auth.oauth2 import OAuth2Authenticator
-from orwin_sdk.exceptions import AuthenticationError
+from efactgate_sdk.auth.api_key import ApiKeyAuthenticator
+from efactgate_sdk.auth.oauth2 import OAuth2Authenticator
+from efactgate_sdk.exceptions import AuthenticationError
 
 # --- Strategies ---
 
@@ -52,7 +52,7 @@ client_secret_st = st.text(
 
 # Token endpoint URL strategy
 token_endpoint_st = st.sampled_from([
-    "https://auth.orwin.io/oauth/token",
+    "https://auth.efactgate.io/oauth/token",
     "https://id.example.com/token",
     "https://sso.test.local/connect/token",
 ])
@@ -506,7 +506,7 @@ class TestProperty30InvalidCredentialsRaiseAuthError:
             OAuth2Authenticator(
                 client_id=empty_id,
                 client_secret="valid-secret",
-                token_endpoint="https://auth.orwin.io/token",
+                token_endpoint="https://auth.efactgate.io/token",
             )
 
         assert exc_info.value.code == "invalid_credentials"
@@ -527,7 +527,7 @@ class TestProperty30InvalidCredentialsRaiseAuthError:
             OAuth2Authenticator(
                 client_id="valid-id",
                 client_secret=empty_secret,
-                token_endpoint="https://auth.orwin.io/token",
+                token_endpoint="https://auth.efactgate.io/token",
             )
 
         assert exc_info.value.code == "invalid_credentials"

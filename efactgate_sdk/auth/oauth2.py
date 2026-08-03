@@ -8,8 +8,8 @@ from typing import Any
 import httpx
 import jwt
 
-from orwin_sdk.auth.base import AuthenticatorBase
-from orwin_sdk.exceptions import (
+from efactgate_sdk.auth.base import AuthenticatorBase
+from efactgate_sdk.exceptions import (
     AuthenticationError,
     ConfigurationError,
 )

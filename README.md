@@ -1,7 +1,7 @@
-# Orwin SDK — API Universelle GW-eFactures (Python)
+# Efactgate SDK — API Universelle GW-eFactures (Python)
 
 [![CI](https://github.com/itechsource-fr/efactgate-sdk-python/actions/workflows/ci.yml/badge.svg)](https://github.com/itechsource-fr/efactgate-sdk-python)
-[![PyPI](https://img.shields.io/pypi/v/orwin-sdk)](https://pypi.org/project/orwin-sdk/)
+[![PyPI](https://img.shields.io/pypi/v/efactgate-sdk)](https://pypi.org/project/efactgate-sdk/)
 
 Client Python asynchrone pour l'API Universelle GW-eFactures. Encapsule l'authentification,
 la validation locale, l'envoi de factures, la récupération de statuts/ACK et la gestion
@@ -12,7 +12,7 @@ résiliente des erreurs réseau.
 ## Installation
 
 ```bash
-pip install orwin-sdk
+pip install efactgate-sdk
 ```
 
 **Prérequis :** Python 3.11+
@@ -23,11 +23,11 @@ pip install orwin-sdk
 
 ```python
 import asyncio
-from orwin_sdk.client import OrwinClient
+from efactgate_sdk.client import EfactgateClient
 
 async def main() -> None:
-    async with OrwinClient(
-        base_url="https://api.gw-efactures.orwin.io/api/v1",
+    async with EfactgateClient(
+        base_url="https://api.gw-efactures.efactgate.io/api/v1",
         api_key="votre-clé-api",
     ) as client:
         # Le SDK inclut automatiquement le header X-API-Key
@@ -41,14 +41,14 @@ asyncio.run(main())
 
 ```python
 import asyncio
-from orwin_sdk.client import OrwinClient
+from efactgate_sdk.client import EfactgateClient
 
 async def main() -> None:
-    async with OrwinClient(
-        base_url="https://api.gw-efactures.orwin.io/api/v1",
+    async with EfactgateClient(
+        base_url="https://api.gw-efactures.efactgate.io/api/v1",
         oauth_client_id="votre-client-id",
         oauth_client_secret="votre-client-secret",
-        oauth_token_endpoint="https://auth.orwin.io/oauth2/token",
+        oauth_token_endpoint="https://auth.efactgate.io/oauth2/token",
     ) as client:
         # Le SDK obtient et rafraîchit le Bearer token automatiquement
         status = await client.get_status("flux-id-existant")
@@ -61,18 +61,18 @@ asyncio.run(main())
 
 ```python
 import asyncio
-from orwin_sdk.client import OrwinClient
-from orwin_sdk.models.invoice import InvoiceSubmission
-from orwin_sdk.models.enums import ImportFormat
+from efactgate_sdk.client import EfactgateClient
+from efactgate_sdk.models.invoice import InvoiceSubmission
+from efactgate_sdk.models.enums import ImportFormat
 
 async def envoyer_facture() -> None:
-    async with OrwinClient(
-        base_url="https://api.gw-efactures.orwin.io/api/v1",
+    async with EfactgateClient(
+        base_url="https://api.gw-efactures.efactgate.io/api/v1",
         api_key="votre-clé-api",
     ) as client:
         facture = InvoiceSubmission(
             content='{"numero": "FA-2024-001", "montant_ttc": "1200.00"}',
-            format="orwin_json",
+            format="efactgate_json",
             target_connector_id="connector-chorus-pro",
             enterprise_siret="12345678901234",
             metadata={"departement": "comptabilite"},
@@ -90,11 +90,11 @@ asyncio.run(envoyer_facture())
 
 ```python
 import asyncio
-from orwin_sdk.client import OrwinClient
+from efactgate_sdk.client import EfactgateClient
 
 async def consulter_statut() -> None:
-    async with OrwinClient(
-        base_url="https://api.gw-efactures.orwin.io/api/v1",
+    async with EfactgateClient(
+        base_url="https://api.gw-efactures.efactgate.io/api/v1",
         api_key="votre-clé-api",
     ) as client:
         flux_id = "a1b2c3d4-e5f6-7890-abcd-ef1234567890"
@@ -117,12 +117,12 @@ asyncio.run(consulter_statut())
 
 ```python
 import asyncio
-from orwin_sdk.client import OrwinClient
-from orwin_sdk.exceptions import TimeoutError
+from efactgate_sdk.client import EfactgateClient
+from efactgate_sdk.exceptions import TimeoutError
 
 async def attendre_statut_final() -> None:
-    async with OrwinClient(
-        base_url="https://api.gw-efactures.orwin.io/api/v1",
+    async with EfactgateClient(
+        base_url="https://api.gw-efactures.efactgate.io/api/v1",
         api_key="votre-clé-api",
     ) as client:
         flux_id = "a1b2c3d4-e5f6-7890-abcd-ef1234567890"
@@ -152,13 +152,13 @@ asyncio.run(attendre_statut_final())
 
 ```python
 import asyncio
-from orwin_sdk.client import OrwinClient
-from orwin_sdk.models.invoice import InvoiceSubmission
-from orwin_sdk.exceptions import (
+from efactgate_sdk.client import EfactgateClient
+from efactgate_sdk.models.invoice import InvoiceSubmission
+from efactgate_sdk.exceptions import (
     AuthenticationError,
     ConfigurationError,
     NotFoundError,
-    OrwinSDKError,
+    EfactgateSDKError,
     TimeoutError,
     TransmissionError,
     ValidationError,
@@ -166,13 +166,13 @@ from orwin_sdk.exceptions import (
 
 async def gestion_erreurs() -> None:
     try:
-        async with OrwinClient(
-            base_url="https://api.gw-efactures.orwin.io/api/v1",
+        async with EfactgateClient(
+            base_url="https://api.gw-efactures.efactgate.io/api/v1",
             api_key="votre-clé-api",
         ) as client:
             facture = InvoiceSubmission(
                 content='{"numero": "FA-2024-001"}',
-                format="orwin_json",
+                format="efactgate_json",
                 target_connector_id="connector-chorus",
                 enterprise_siret="12345678901234",
             )
@@ -207,7 +207,7 @@ async def gestion_erreurs() -> None:
         # Configuration invalide (URL, bornes, paramètres manquants)
         print(f"Erreur de configuration : {e.message}")
 
-    except OrwinSDKError as e:
+    except EfactgateSDKError as e:
         # Catch-all pour toute erreur SDK
         print(f"Erreur SDK : [{e.code}] {e.message}")
 
@@ -220,10 +220,10 @@ asyncio.run(gestion_erreurs())
 
 | Paramètre | Type | Défaut | Description |
 |-----------|------|--------|-------------|
-| `base_url` | `str` | — | URL de base de l'API (ou `ORWIN_API_URL`) |
-| `api_key` | `str` | — | Clé API (ou `ORWIN_API_KEY`) |
-| `oauth_client_id` | `str` | — | Client ID OAuth2 (ou `ORWIN_OAUTH_CLIENT_ID`) |
-| `oauth_client_secret` | `str` | — | Client secret OAuth2 (ou `ORWIN_OAUTH_CLIENT_SECRET`) |
+| `base_url` | `str` | — | URL de base de l'API (ou `EFACTGATE_API_URL`) |
+| `api_key` | `str` | — | Clé API (ou `EFACTGATE_API_KEY`) |
+| `oauth_client_id` | `str` | — | Client ID OAuth2 (ou `EFACTGATE_OAUTH_CLIENT_ID`) |
+| `oauth_client_secret` | `str` | — | Client secret OAuth2 (ou `EFACTGATE_OAUTH_CLIENT_SECRET`) |
 | `oauth_token_endpoint` | `str` | — | URL du token endpoint OAuth2 |
 | `timeout` | `float` | `30.0` | Timeout par requête en secondes (bornes : 1–300) |
 | `max_retries` | `int` | `5` | Nombre max de tentatives (bornes : 0–10) |
@@ -238,10 +238,10 @@ Les paramètres explicites ont toujours priorité sur les variables d'environnem
 
 | Variable | Équivalent paramètre |
 |----------|---------------------|
-| `ORWIN_API_URL` | `base_url` |
-| `ORWIN_API_KEY` | `api_key` |
-| `ORWIN_OAUTH_CLIENT_ID` | `oauth_client_id` |
-| `ORWIN_OAUTH_CLIENT_SECRET` | `oauth_client_secret` |
+| `EFACTGATE_API_URL` | `base_url` |
+| `EFACTGATE_API_KEY` | `api_key` |
+| `EFACTGATE_OAUTH_CLIENT_ID` | `oauth_client_id` |
+| `EFACTGATE_OAUTH_CLIENT_SECRET` | `oauth_client_secret` |
 
 ### Mode Sandbox
 
@@ -249,23 +249,23 @@ En mode sandbox, toutes les requêtes sont redirigées vers l'environnement de t
 Aucune requête ne peut atteindre la production.
 
 ```python
-client = OrwinClient(
+client = EfactgateClient(
     api_key="test-key",
-    sandbox=True,  # URL forcée vers https://sandbox.gw-efactures.orwin.io/api/v1
+    sandbox=True,  # URL forcée vers https://sandbox.gw-efactures.efactgate.io/api/v1
 )
 ```
 
 ### Validation locale sans envoi
 
 ```python
-from orwin_sdk.client import OrwinClient
-from orwin_sdk.models.invoice import InvoiceSubmission
+from efactgate_sdk.client import EfactgateClient
+from efactgate_sdk.models.invoice import InvoiceSubmission
 
-client = OrwinClient(base_url="https://api.orwin.io/api/v1", api_key="key")
+client = EfactgateClient(base_url="https://api.efactgate.io/api/v1", api_key="key")
 
 facture = InvoiceSubmission(
     content='{"numero": "FA-2024-001"}',
-    format="orwin_json",
+    format="efactgate_json",
     target_connector_id="connector-test",
     enterprise_siret="12345678901234",
 )
@@ -297,6 +297,6 @@ else:
 ```bash
 pip install -e ".[dev]"
 pytest
-mypy orwin_sdk --strict
-ruff check orwin_sdk
+mypy efactgate_sdk --strict
+ruff check efactgate_sdk
 ```

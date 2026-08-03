@@ -39,8 +39,8 @@ generators:
     generatorName: python
     outputDir: ../python/generated
     additionalProperties:
-      packageName: orwin_sdk
-      projectName: orwin-sdk
+      packageName: efactgate_sdk
+      projectName: efactgate-sdk
       packageVersion: 0.1.0
       pythonVersion: "3.11"
       library: httpx
@@ -54,8 +54,8 @@ generators:
       UUID: uuid
     # Preserve custom files in these directories
     preservePatterns:
-      - "orwin_sdk/custom/**"
-      - "orwin_sdk/**/*_custom.py"
+      - "efactgate_sdk/custom/**"
+      - "efactgate_sdk/**/*_custom.py"
     # Post-generation commands
     postGeneration:
       - "python -m mypy --strict ."
@@ -69,7 +69,7 @@ generators:
     generatorName: typescript-fetch
     outputDir: ../typescript/generated
     additionalProperties:
-      npmName: "@orwin/sdk"
+      npmName: "@efactgate/sdk"
       npmVersion: 0.1.0
       supportsES6: true
       typescriptThreePlus: true
@@ -93,12 +93,12 @@ generators:
     generatorName: java
     outputDir: ../java/generated
     additionalProperties:
-      groupId: io.orwin
-      artifactId: orwin-sdk
+      groupId: io.efactgate
+      artifactId: efactgate-sdk
       artifactVersion: 0.1.0
-      apiPackage: io.orwin.sdk.api
-      modelPackage: io.orwin.sdk.model
-      invokerPackage: io.orwin.sdk
+      apiPackage: io.efactgate.sdk.api
+      modelPackage: io.efactgate.sdk.model
+      invokerPackage: io.efactgate.sdk
       library: native
       java8: false
       dateLibrary: java8
@@ -107,7 +107,7 @@ generators:
       serializationLibrary: jackson
     # Preserve custom files in these directories
     preservePatterns:
-      - "src/main/java/io/orwin/sdk/custom/**"
+      - "src/main/java/io/efactgate/sdk/custom/**"
       - "src/**/*Custom.java"
     # Post-generation commands
     postGeneration:
@@ -121,16 +121,16 @@ generators:
     generatorName: c
     outputDir: ../c/generated
     additionalProperties:
-      projectName: orwin-sdk
+      projectName: efactgate-sdk
       packageVersion: 0.1.0
       hideGenerationTimestamp: true
     # Preserve custom files in these directories
     preservePatterns:
       - "custom/**"
       - "src/*_custom.c"
-      - "include/orwin/*_custom.h"
+      - "include/efactgate/*_custom.h"
     # Post-generation commands
     postGeneration:
       - "cmake -B build -DCMAKE_C_STANDARD=99 -DCMAKE_C_FLAGS='-Wall -Werror'"
       - "cmake --build build"
-      - "conan export . orwin-sdk/0.1.0@"
+      - "conan export . efactgate-sdk/0.1.0@"

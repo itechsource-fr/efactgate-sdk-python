@@ -18,14 +18,14 @@ import pytest
 from hypothesis import HealthCheck, given, settings
 from hypothesis import strategies as st
 
-from orwin_sdk.config import (
+from efactgate_sdk.config import (
     SANDBOX_URL,
     ApiKeyCredentials,
     ClientConfig,
     OAuth2Credentials,
     load_config,
 )
-from orwin_sdk.exceptions import ConfigurationError
+from efactgate_sdk.exceptions import ConfigurationError
 
 if TYPE_CHECKING:
     from collections.abc import Generator
@@ -33,10 +33,10 @@ if TYPE_CHECKING:
 # --- Helpers ---
 
 _ENV_KEYS = (
-    "ORWIN_API_URL",
-    "ORWIN_API_KEY",
-    "ORWIN_OAUTH_CLIENT_ID",
-    "ORWIN_OAUTH_CLIENT_SECRET",
+    "EFACTGATE_API_URL",
+    "EFACTGATE_API_KEY",
+    "EFACTGATE_OAUTH_CLIENT_ID",
+    "EFACTGATE_OAUTH_CLIENT_SECRET",
 )
 
 
@@ -83,8 +83,8 @@ invalid_max_retries_st = st.one_of(
 
 # Valid URL strategy
 valid_url_st = st.sampled_from([
-    "https://api.orwin.io/v1",
-    "https://gw-efactures.orwin.io/api/v1",
+    "https://api.efactgate.io/v1",
+    "https://gw-efactures.efactgate.io/api/v1",
     "http://localhost:8000",
     "https://staging.example.com/api",
 ])
@@ -97,8 +97,8 @@ api_key_st = st.text(
 
 # Env var value strategy for URL
 env_url_st = st.sampled_from([
-    "https://env-api.orwin.io/v1",
-    "https://env-staging.orwin.io/v1",
+    "https://env-api.efactgate.io/v1",
+    "https://env-staging.efactgate.io/v1",
     "http://env-localhost:9000",
 ])
 
@@ -127,7 +127,7 @@ class TestProperty14BoundsValidation:
     def test_valid_bounds_succeed(self, timeout: float, max_retries: int) -> None:
         """Valid timeout and max_retries values produce a successful config."""
         config = load_config(
-            base_url="https://api.orwin.io/v1",
+            base_url="https://api.efactgate.io/v1",
             api_key="test-key-123",
             timeout=timeout,
             max_retries=max_retries,
@@ -143,7 +143,7 @@ class TestProperty14BoundsValidation:
         """Timeout outside [1, 300] raises ConfigurationError."""
         with pytest.raises(ConfigurationError) as exc_info:
             load_config(
-                base_url="https://api.orwin.io/v1",
+                base_url="https://api.efactgate.io/v1",
                 api_key="test-key-123",
                 timeout=timeout,
             )
@@ -157,7 +157,7 @@ class TestProperty14BoundsValidation:
         """max_retries outside [0, 10] raises ConfigurationError."""
         with pytest.raises(ConfigurationError) as exc_info:
             load_config(
-                base_url="https://api.orwin.io/v1",
+                base_url="https://api.efactgate.io/v1",
                 api_key="test-key-123",
                 max_retries=max_retries,
             )
@@ -188,8 +188,8 @@ class TestProperty15ParameterPriority:
     def test_explicit_url_overrides_env(
         self, explicit_url: str, env_url: str
     ) -> None:
-        """Explicit base_url always takes priority over ORWIN_API_URL env var."""
-        with patched_env({"ORWIN_API_URL": env_url, "ORWIN_API_KEY": "env-key"}):
+        """Explicit base_url always takes priority over EFACTGATE_API_URL env var."""
+        with patched_env({"EFACTGATE_API_URL": env_url, "EFACTGATE_API_KEY": "env-key"}):
             config = load_config(
                 base_url=explicit_url,
                 api_key="test-key",
@@ -208,10 +208,10 @@ class TestProperty15ParameterPriority:
     def test_explicit_api_key_overrides_env(
         self, explicit_key: str, env_key: str
     ) -> None:
-        """Explicit api_key always takes priority over ORWIN_API_KEY env var."""
-        with patched_env({"ORWIN_API_KEY": env_key}):
+        """Explicit api_key always takes priority over EFACTGATE_API_KEY env var."""
+        with patched_env({"EFACTGATE_API_KEY": env_key}):
             config = load_config(
-                base_url="https://api.orwin.io/v1",
+                base_url="https://api.efactgate.io/v1",
                 api_key=explicit_key,
             )
             assert isinstance(config.credentials, ApiKeyCredentials)
@@ -225,7 +225,7 @@ class TestProperty15ParameterPriority:
     @given(env_url=env_url_st)
     def test_env_var_used_when_no_explicit_param(self, env_url: str) -> None:
         """Env vars are used as fallback when explicit params are not provided."""
-        with patched_env({"ORWIN_API_URL": env_url, "ORWIN_API_KEY": "env-key-123"}):
+        with patched_env({"EFACTGATE_API_URL": env_url, "EFACTGATE_API_KEY": "env-key-123"}):
             config = load_config()
             assert config.base_url == env_url
             assert isinstance(config.credentials, ApiKeyCredentials)
@@ -253,14 +253,14 @@ class TestProperty15ParameterPriority:
     ) -> None:
         """Explicit OAuth2 params take priority over env vars."""
         with patched_env({
-            "ORWIN_OAUTH_CLIENT_ID": env_client_id,
-            "ORWIN_OAUTH_CLIENT_SECRET": "env-secret",
+            "EFACTGATE_OAUTH_CLIENT_ID": env_client_id,
+            "EFACTGATE_OAUTH_CLIENT_SECRET": "env-secret",
         }):
             config = load_config(
-                base_url="https://api.orwin.io/v1",
+                base_url="https://api.efactgate.io/v1",
                 oauth_client_id=explicit_client_id,
                 oauth_client_secret="explicit-secret",
-                oauth_token_endpoint="https://auth.orwin.io/token",
+                oauth_token_endpoint="https://auth.efactgate.io/token",
             )
             assert isinstance(config.credentials, OAuth2Credentials)
             assert config.credentials.client_id == explicit_client_id
@@ -303,14 +303,14 @@ class TestProperty16SandboxIsolation:
     )
     @given(api_key=api_key_st)
     def test_sandbox_ignores_env_url(self, api_key: str) -> None:
-        """When sandbox=True, ORWIN_API_URL env var is ignored; sandbox URL is used."""
-        with patched_env({"ORWIN_API_URL": "https://production.orwin.io/api/v1"}):
+        """When sandbox=True, EFACTGATE_API_URL env var is ignored; sandbox URL is used."""
+        with patched_env({"EFACTGATE_API_URL": "https://production.efactgate.io/api/v1"}):
             config = load_config(
                 api_key=api_key,
                 sandbox=True,
             )
             assert config.base_url == SANDBOX_URL
-            assert config.base_url != "https://production.orwin.io/api/v1"
+            assert config.base_url != "https://production.efactgate.io/api/v1"
 
     @pytest.mark.property
     @settings(max_examples=150)

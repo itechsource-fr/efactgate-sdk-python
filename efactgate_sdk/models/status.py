@@ -1,4 +1,4 @@
-"""Flux status data models for the Orwin SDK Client."""
+"""Flux status data models for the Efactgate SDK Client."""
 
 from __future__ import annotations
 
@@ -9,7 +9,7 @@ if TYPE_CHECKING:
     from datetime import datetime
     from uuid import UUID
 
-    from orwin_sdk.models.enums import FluxStatus, FluxType
+    from efactgate_sdk.models.enums import FluxStatus, FluxType
 
 
 @dataclass(frozen=True, slots=True)

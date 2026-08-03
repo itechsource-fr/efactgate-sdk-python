@@ -1,4 +1,4 @@
-"""OrwinClient — Point d'entrée principal du SDK API Universelle.
+"""EfactgateClient — Point d'entrée principal du SDK API Universelle.
 
 Assembles authentication, transport, validation, and observability
 into a single async client for the GW-eFactures API.
@@ -14,38 +14,38 @@ from pathlib import Path
 from types import TracebackType
 from typing import Any
 
-from orwin_sdk.auth.api_key import ApiKeyAuthenticator
-from orwin_sdk.auth.base import AuthenticatorBase
-from orwin_sdk.auth.oauth2 import OAuth2Authenticator
-from orwin_sdk.config import (
+from efactgate_sdk.auth.api_key import ApiKeyAuthenticator
+from efactgate_sdk.auth.base import AuthenticatorBase
+from efactgate_sdk.auth.oauth2 import OAuth2Authenticator
+from efactgate_sdk.config import (
     ApiKeyCredentials,
     ClientConfig,
     OAuth2Credentials,
     load_config,
 )
-from orwin_sdk.exceptions import (
+from efactgate_sdk.exceptions import (
     ApiError,
     NotFoundError,
     TimeoutError,
     ValidationError,
 )
-from orwin_sdk.models.ack import AckResponse
-from orwin_sdk.models.enums import FluxStatus, ImportFormat
-from orwin_sdk.models.ereporting import EReportingSubmission
-from orwin_sdk.models.errors import FieldError
-from orwin_sdk.models.invoice import (
+from efactgate_sdk.models.ack import AckResponse
+from efactgate_sdk.models.enums import FluxStatus, ImportFormat
+from efactgate_sdk.models.ereporting import EReportingSubmission
+from efactgate_sdk.models.errors import FieldError
+from efactgate_sdk.models.invoice import (
     BatchResponse,
     FluxCreatedResponse,
     ImportReport,
     InvoiceSubmission,
 )
-from orwin_sdk.models.status import FluxStatusResponse
-from orwin_sdk.observability.hooks import EventHooks
-from orwin_sdk.observability.logger import StructuredLogger
-from orwin_sdk.transport.http_client import HttpTransport
-from orwin_sdk.transport.retry import RetryPolicy
-from orwin_sdk.transport.serialization import deserialize, serialize
-from orwin_sdk.validation.invoice import validate
+from efactgate_sdk.models.status import FluxStatusResponse
+from efactgate_sdk.observability.hooks import EventHooks
+from efactgate_sdk.observability.logger import StructuredLogger
+from efactgate_sdk.transport.http_client import HttpTransport
+from efactgate_sdk.transport.retry import RetryPolicy
+from efactgate_sdk.transport.serialization import deserialize, serialize
+from efactgate_sdk.validation.invoice import validate
 
 # Terminal statuses that end the polling loop
 _TERMINAL_STATUSES: frozenset[str] = frozenset({
@@ -55,7 +55,7 @@ _TERMINAL_STATUSES: frozenset[str] = frozenset({
 })
 
 
-class OrwinClient:
+class EfactgateClient:
     """Async client for the GW-eFactures API Universelle.
 
     Provides methods for:
@@ -67,8 +67,8 @@ class OrwinClient:
     Supports async context manager for proper resource cleanup.
 
     Example:
-        async with OrwinClient(
-            base_url="https://api.gw-efactures.orwin.io/api/v1",
+        async with EfactgateClient(
+            base_url="https://api.gw-efactures.efactgate.io/api/v1",
             api_key="my-api-key",
         ) as client:
             result = await client.submit_invoice(invoice)
@@ -93,10 +93,10 @@ class OrwinClient:
         """Initialize the SDK client.
 
         Args:
-            base_url: API base URL (or set ORWIN_API_URL env var).
-            api_key: API key for X-API-Key auth (or set ORWIN_API_KEY).
-            oauth_client_id: OAuth2 client ID (or set ORWIN_OAUTH_CLIENT_ID).
-            oauth_client_secret: OAuth2 client secret (or set ORWIN_OAUTH_CLIENT_SECRET).
+            base_url: API base URL (or set EFACTGATE_API_URL env var).
+            api_key: API key for X-API-Key auth (or set EFACTGATE_API_KEY).
+            oauth_client_id: OAuth2 client ID (or set EFACTGATE_OAUTH_CLIENT_ID).
+            oauth_client_secret: OAuth2 client secret (or set EFACTGATE_OAUTH_CLIENT_SECRET).
             oauth_token_endpoint: OAuth2 token endpoint URL.
             timeout: Request timeout in seconds (default 30, bounds [1, 300]).
             max_retries: Max retry attempts (default 5, bounds [0, 10]).
@@ -398,7 +398,7 @@ class OrwinClient:
         """Close the underlying HTTP transport and release resources."""
         await self._transport.close()
 
-    async def __aenter__(self) -> OrwinClient:
+    async def __aenter__(self) -> EfactgateClient:
         """Enter the async context manager."""
         return self
 
@@ -444,4 +444,4 @@ class OrwinClient:
         return cast("dict[str, Any]", json.loads(json_str))
 
 
-__all__ = ["OrwinClient"]
+__all__ = ["EfactgateClient"]

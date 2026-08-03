@@ -1,4 +1,4 @@
-"""Enumerations for the Orwin SDK Client models."""
+"""Enumerations for the Efactgate SDK Client models."""
 
 from __future__ import annotations
 
@@ -11,7 +11,7 @@ class InvoiceFormat(StrEnum):
     UBL = "ubl"
     CII = "cii"
     FACTUR_X = "factur_x"
-    ORWIN_JSON = "orwin_json"
+    EFACTGATE_JSON = "efactgate_json"
 
 
 class FluxType(StrEnum):

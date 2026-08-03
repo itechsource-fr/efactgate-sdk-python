@@ -13,8 +13,8 @@ import pytest
 from hypothesis import given, settings
 from hypothesis import strategies as st
 
-from orwin_sdk.exceptions import RequestError, TransmissionError
-from orwin_sdk.transport.retry import (
+from efactgate_sdk.exceptions import RequestError, TransmissionError
+from efactgate_sdk.transport.retry import (
     RetryPolicy,
     is_non_retryable_client_error,
     is_retryable_status,
@@ -202,11 +202,11 @@ class TestProperty13HttpErrorClassification:
             http_code=status_code,
             flux_id=None,
             body="error body content",
-            url="https://api.orwin.io/v1/invoices",
+            url="https://api.efactgate.io/v1/invoices",
         )
         assert error.http_code == status_code
         assert error.body == "error body content"
-        assert error.url == "https://api.orwin.io/v1/invoices"
+        assert error.url == "https://api.efactgate.io/v1/invoices"
         assert len(error.body) <= 1024
 
     @pytest.mark.property

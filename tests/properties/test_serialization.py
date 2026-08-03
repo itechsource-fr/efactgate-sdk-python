@@ -22,18 +22,18 @@ import pytest
 from hypothesis import given, settings
 from hypothesis import strategies as st
 
-from orwin_sdk.exceptions import DeserializationError
-from orwin_sdk.models.ack import AckResponse
-from orwin_sdk.models.enums import FluxStatus, FluxType, InvoiceFormat
-from orwin_sdk.models.ereporting import EReportingSubmission
-from orwin_sdk.models.invoice import (
+from efactgate_sdk.exceptions import DeserializationError
+from efactgate_sdk.models.ack import AckResponse
+from efactgate_sdk.models.enums import FluxStatus, FluxType, InvoiceFormat
+from efactgate_sdk.models.ereporting import EReportingSubmission
+from efactgate_sdk.models.invoice import (
     FluxCreatedResponse,
     ImportErrorDetail,
     ImportReport,
     InvoiceSubmission,
 )
-from orwin_sdk.models.status import FluxStatusResponse, TransitionDetail
-from orwin_sdk.transport.serialization import deserialize, serialize
+from efactgate_sdk.models.status import FluxStatusResponse, TransitionDetail
+from efactgate_sdk.transport.serialization import deserialize, serialize
 
 # ---------------------------------------------------------------------------
 # Hypothesis strategies

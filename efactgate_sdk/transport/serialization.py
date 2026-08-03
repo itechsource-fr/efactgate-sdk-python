@@ -1,4 +1,4 @@
-"""JSON serialization and deserialization for Orwin SDK models.
+"""JSON serialization and deserialization for Efactgate SDK models.
 
 Handles conversion between frozen dataclass instances and JSON strings,
 applying type-specific formatting rules:
@@ -22,7 +22,7 @@ from enum import Enum
 from typing import Any, TypeVar
 from uuid import UUID
 
-from orwin_sdk.exceptions import DeserializationError
+from efactgate_sdk.exceptions import DeserializationError
 
 T = TypeVar("T")
 
@@ -31,7 +31,7 @@ def serialize(model: object) -> str:
     """Serialize an SDK model (frozen dataclass) to a JSON string.
 
     Args:
-        model: A frozen dataclass instance from orwin_sdk.models.
+        model: A frozen dataclass instance from efactgate_sdk.models.
 
     Returns:
         JSON string with type-specific formatting applied.
@@ -463,7 +463,7 @@ def _resolve_field_type(field: dataclasses.Field[Any], cls: type[Any]) -> Any:
 
     # Also import model enums for resolution
     try:
-        from orwin_sdk.models.enums import (
+        from efactgate_sdk.models.enums import (
             FluxStatus,
             FluxType,
             ImportFormat,
@@ -479,8 +479,8 @@ def _resolve_field_type(field: dataclasses.Field[Any], cls: type[Any]) -> Any:
 
     # Import model classes for nested resolution
     try:
-        from orwin_sdk.models.invoice import ImportErrorDetail
-        from orwin_sdk.models.status import TransitionDetail
+        from efactgate_sdk.models.invoice import ImportErrorDetail
+        from efactgate_sdk.models.status import TransitionDetail
 
         eval_ns["TransitionDetail"] = TransitionDetail
         eval_ns["ImportErrorDetail"] = ImportErrorDetail

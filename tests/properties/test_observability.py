@@ -20,8 +20,8 @@ import pytest
 from hypothesis import given, settings
 from hypothesis import strategies as st
 
-from orwin_sdk.observability.hooks import EventHooks
-from orwin_sdk.observability.logger import (
+from efactgate_sdk.observability.hooks import EventHooks
+from efactgate_sdk.observability.logger import (
     StructuredLogger,
     sanitize_headers,
     sanitize_url,
@@ -48,7 +48,7 @@ log_message_st = st.text(
 
 # URL strategies
 base_url_st = st.sampled_from([
-    "https://api.orwin.io/v1/invoices",
+    "https://api.efactgate.io/v1/invoices",
     "http://localhost:8080/status/123",
     "https://example.com/path",
 ])
@@ -150,7 +150,7 @@ class TestProperty27LogLevelEnforcement:
         # Use a unique logger name to avoid state pollution between tests
         import uuid
 
-        logger_name = f"orwin_test_{uuid.uuid4().hex[:8]}"
+        logger_name = f"efactgate_test_{uuid.uuid4().hex[:8]}"
         logger = StructuredLogger(name=logger_name, level=configured_level)
         configured_numeric = getattr(logging, configured_level.upper())
 
@@ -184,7 +184,7 @@ class TestProperty27LogLevelEnforcement:
         """Logs at exactly the configured level are always emitted."""
         import uuid
 
-        logger_name = f"orwin_test_{uuid.uuid4().hex[:8]}"
+        logger_name = f"efactgate_test_{uuid.uuid4().hex[:8]}"
         logger = StructuredLogger(name=logger_name, level=configured_level)
         configured_numeric = getattr(logging, configured_level.upper())
 
@@ -204,7 +204,7 @@ class TestProperty27LogLevelEnforcement:
         """Logs above the configured level are always emitted."""
         import uuid
 
-        logger_name = f"orwin_test_{uuid.uuid4().hex[:8]}"
+        logger_name = f"efactgate_test_{uuid.uuid4().hex[:8]}"
         logger = StructuredLogger(name=logger_name, level=configured_level)
         configured_numeric = getattr(logging, configured_level.upper())
 
@@ -228,7 +228,7 @@ class TestProperty27LogLevelEnforcement:
         """The debug() convenience method respects the configured level."""
         import uuid
 
-        logger_name = f"orwin_test_{uuid.uuid4().hex[:8]}"
+        logger_name = f"efactgate_test_{uuid.uuid4().hex[:8]}"
         logger = StructuredLogger(name=logger_name, level=configured_level)
         configured_numeric = getattr(logging, configured_level.upper())
 

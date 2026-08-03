@@ -11,10 +11,10 @@ import os
 import re
 from dataclasses import dataclass
 
-from orwin_sdk.exceptions import ConfigurationError
+from efactgate_sdk.exceptions import ConfigurationError
 
 # Sandbox URL constant — when sandbox=True, all requests target this URL exclusively.
-SANDBOX_URL: str = "https://sandbox.gw-efactures.orwin.io/api/v1"
+SANDBOX_URL: str = "https://sandbox.gw-efactures.efactgate.io/api/v1"
 
 # Validation bounds
 MIN_TIMEOUT: float = 1.0
@@ -146,16 +146,16 @@ def load_config(
     Priority: explicit parameters > environment variables.
 
     Environment variables supported:
-        - ORWIN_API_URL: Base URL of the API
-        - ORWIN_API_KEY: API key for authentication
-        - ORWIN_OAUTH_CLIENT_ID: OAuth2 client ID
-        - ORWIN_OAUTH_CLIENT_SECRET: OAuth2 client secret
+        - EFACTGATE_API_URL: Base URL of the API
+        - EFACTGATE_API_KEY: API key for authentication
+        - EFACTGATE_OAUTH_CLIENT_ID: OAuth2 client ID
+        - EFACTGATE_OAUTH_CLIENT_SECRET: OAuth2 client secret
 
     Args:
-        base_url: API base URL (falls back to ORWIN_API_URL env var).
-        api_key: API key (falls back to ORWIN_API_KEY env var).
-        oauth_client_id: OAuth2 client ID (falls back to ORWIN_OAUTH_CLIENT_ID).
-        oauth_client_secret: OAuth2 client secret (falls back to ORWIN_OAUTH_CLIENT_SECRET).
+        base_url: API base URL (falls back to EFACTGATE_API_URL env var).
+        api_key: API key (falls back to EFACTGATE_API_KEY env var).
+        oauth_client_id: OAuth2 client ID (falls back to EFACTGATE_OAUTH_CLIENT_ID).
+        oauth_client_secret: OAuth2 client secret (falls back to EFACTGATE_OAUTH_CLIENT_SECRET).
         oauth_token_endpoint: OAuth2 token endpoint URL.
         timeout: Request timeout in seconds (default: 30.0).
         max_retries: Maximum retry count (default: 5).
@@ -170,19 +170,19 @@ def load_config(
         ConfigurationError: If required params are missing, bounds exceeded, or URL invalid.
     """
     # Resolve base_url: explicit > env var
-    resolved_url = base_url if base_url is not None else os.environ.get("ORWIN_API_URL")
+    resolved_url = base_url if base_url is not None else os.environ.get("EFACTGATE_API_URL")
 
     # Resolve credentials: explicit > env var
-    resolved_api_key = api_key if api_key is not None else os.environ.get("ORWIN_API_KEY")
+    resolved_api_key = api_key if api_key is not None else os.environ.get("EFACTGATE_API_KEY")
     resolved_client_id = (
         oauth_client_id
         if oauth_client_id is not None
-        else os.environ.get("ORWIN_OAUTH_CLIENT_ID")
+        else os.environ.get("EFACTGATE_OAUTH_CLIENT_ID")
     )
     resolved_client_secret = (
         oauth_client_secret
         if oauth_client_secret is not None
-        else os.environ.get("ORWIN_OAUTH_CLIENT_SECRET")
+        else os.environ.get("EFACTGATE_OAUTH_CLIENT_SECRET")
     )
 
     # Resolve timeout and max_retries with defaults
@@ -201,7 +201,7 @@ def load_config(
             code="missing_base_url",
             message=(
                 "Missing required parameter: base_url. "
-                "Provide it explicitly or set the ORWIN_API_URL environment variable."
+                "Provide it explicitly or set the EFACTGATE_API_URL environment variable."
             ),
         )
     else:
@@ -229,9 +229,9 @@ def load_config(
         raise ConfigurationError(
             code="missing_credentials",
             message=(
-                "Missing required credentials. Provide either api_key (or ORWIN_API_KEY env var) "
+                "Missing required credentials. Provide either api_key (or EFACTGATE_API_KEY env var) "
                 "or both oauth_client_id and oauth_client_secret "
-                "(or ORWIN_OAUTH_CLIENT_ID and ORWIN_OAUTH_CLIENT_SECRET env vars)."
+                "(or EFACTGATE_OAUTH_CLIENT_ID and EFACTGATE_OAUTH_CLIENT_SECRET env vars)."
             ),
         )
 

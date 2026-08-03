@@ -10,10 +10,10 @@ import re
 from decimal import Decimal, InvalidOperation
 from typing import Any
 
-from orwin_sdk.exceptions import FieldError
-from orwin_sdk.models.invoice import InvoiceSubmission
-from orwin_sdk.validation.amounts import InvoiceAmounts, validate_amounts
-from orwin_sdk.validation.siret import validate_siret
+from efactgate_sdk.exceptions import FieldError
+from efactgate_sdk.models.invoice import InvoiceSubmission
+from efactgate_sdk.validation.amounts import InvoiceAmounts, validate_amounts
+from efactgate_sdk.validation.siret import validate_siret
 
 # Accepted amount range
 _MIN_AMOUNT = Decimal("0.01")

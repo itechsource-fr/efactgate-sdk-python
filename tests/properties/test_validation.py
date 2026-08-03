@@ -16,12 +16,12 @@ import pytest
 from hypothesis import given, settings
 from hypothesis import strategies as st
 
-from orwin_sdk.exceptions import FieldError
-from orwin_sdk.models.enums import FluxType, InvoiceFormat
-from orwin_sdk.models.invoice import InvoiceSubmission
-from orwin_sdk.validation.amounts import InvoiceAmounts, InvoiceLine, validate_amounts
-from orwin_sdk.validation.invoice import validate
-from orwin_sdk.validation.siret import validate_siret
+from efactgate_sdk.exceptions import FieldError
+from efactgate_sdk.models.enums import FluxType, InvoiceFormat
+from efactgate_sdk.models.invoice import InvoiceSubmission
+from efactgate_sdk.validation.amounts import InvoiceAmounts, InvoiceLine, validate_amounts
+from efactgate_sdk.validation.invoice import validate
+from efactgate_sdk.validation.siret import validate_siret
 
 
 # ---------------------------------------------------------------------------

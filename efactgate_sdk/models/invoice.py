@@ -1,17 +1,17 @@
-"""Invoice-related data models for the Orwin SDK Client."""
+"""Invoice-related data models for the Efactgate SDK Client."""
 
 from __future__ import annotations
 
 from dataclasses import dataclass, field
 from typing import TYPE_CHECKING
 
-from orwin_sdk.models.enums import FluxType
+from efactgate_sdk.models.enums import FluxType
 
 if TYPE_CHECKING:
     from datetime import datetime
     from uuid import UUID
 
-    from orwin_sdk.models.enums import FluxStatus, InvoiceFormat
+    from efactgate_sdk.models.enums import FluxStatus, InvoiceFormat
 
 
 @dataclass(frozen=True, slots=True)

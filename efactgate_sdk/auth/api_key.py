@@ -2,8 +2,8 @@
 
 from __future__ import annotations
 
-from orwin_sdk.auth.base import AuthenticatorBase
-from orwin_sdk.exceptions import AuthenticationError
+from efactgate_sdk.auth.base import AuthenticatorBase
+from efactgate_sdk.exceptions import AuthenticationError
 
 
 class ApiKeyAuthenticator(AuthenticatorBase):

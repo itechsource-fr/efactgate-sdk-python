@@ -1,4 +1,4 @@
-"""Acknowledgement response model for the Orwin SDK Client."""
+"""Acknowledgement response model for the Efactgate SDK Client."""
 
 from __future__ import annotations
 

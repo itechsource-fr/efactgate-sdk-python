@@ -66,11 +66,11 @@ class StructuredLogger:
     - Never includes credentials, tokens, or auth headers in log output
 
     Args:
-        name: Logger name (default: "orwin_sdk").
+        name: Logger name (default: "efactgate_sdk").
         level: Log level string (DEBUG, INFO, WARNING, ERROR, CRITICAL).
     """
 
-    def __init__(self, name: str = "orwin_sdk", level: str = "WARNING") -> None:
+    def __init__(self, name: str = "efactgate_sdk", level: str = "WARNING") -> None:
         self._logger = logging.getLogger(name)
         self._logger.setLevel(getattr(logging, level.upper(), logging.WARNING))
 

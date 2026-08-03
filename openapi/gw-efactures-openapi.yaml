@@ -6,7 +6,7 @@ info:
     ## Présentation
 
     GW-eFactures est la passerelle universelle de e-facturation (B2B) et e-reporting (B2C)
-    de la plateforme Orwin. Elle connecte les logiciels métiers (ERP, CRM, e-commerce) aux
+    de la plateforme Efactgate. Elle connecte les logiciels métiers (ERP, CRM, e-commerce) aux
     logiciels comptables et plateformes agréées (PA/PPF) via une API REST unique.
 
     ## Fonctionnalités principales
@@ -24,20 +24,20 @@ info:
 
     ## Contact
 
-    Pour toute question technique : [api@orwin.fr](mailto:api@orwin.fr)
+    Pour toute question technique : [api@efactgate.fr](mailto:api@efactgate.fr)
   version: 0.1.0
   contact:
-    name: Orwin — Équipe GW-eFactures
-    url: https://orwin.fr/gw-efactures
-    email: api@orwin.fr
+    name: Efactgate — Équipe GW-eFactures
+    url: https://efactgate.fr/gw-efactures
+    email: api@efactgate.fr
   license:
     name: Propriétaire
-    url: https://orwin.fr/legal/licence
+    url: https://efactgate.fr/legal/licence
 
 servers:
-  - url: https://api.orwin.fr/gw-efactures
+  - url: https://api.efactgate.fr/gw-efactures
     description: Production
-  - url: https://sandbox.orwin.fr/gw-efactures
+  - url: https://sandbox.efactgate.fr/gw-efactures
     description: Sandbox (tests et développement)
 
 security:
@@ -65,7 +65,7 @@ paths:
       summary: Soumettre une facture B2B
       description: |
         Soumet une facture B2B unitaire à la passerelle. Le contenu peut être
-        au format UBL, CII, Factur-X ou JSON Orwin.
+        au format UBL, CII, Factur-X ou JSON Efactgate.
       tags:
         - invoices
       requestBody:
@@ -308,7 +308,7 @@ components:
         Le token obtenu est transmis dans le header Authorization.
       flows:
         clientCredentials:
-          tokenUrl: https://auth.orwin.fr/oauth2/token
+          tokenUrl: https://auth.efactgate.fr/oauth2/token
           scopes:
             invoices:write: Soumettre des factures et e-reporting
             invoices:read: Lire les statuts et accusés de réception
@@ -326,7 +326,7 @@ components:
         - ubl
         - cii
         - factur_x
-        - orwin_json
+        - efactgate_json
 
     FluxType:
       type: string

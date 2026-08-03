@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from orwin_sdk.exceptions import FieldError
+from efactgate_sdk.exceptions import FieldError
 
 
 def validate_siret(siret: str, field_path: str = "enterprise_siret") -> list[FieldError]:

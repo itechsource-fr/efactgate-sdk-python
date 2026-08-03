@@ -1,4 +1,4 @@
-"""Error models for the Orwin SDK Client.
+"""Error models for the Efactgate SDK Client.
 
 Re-exports FieldError from the exceptions module and provides
 additional error response models.
@@ -8,7 +8,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 
-from orwin_sdk.exceptions import FieldError
+from efactgate_sdk.exceptions import FieldError
 
 
 @dataclass(frozen=True, slots=True)

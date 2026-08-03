@@ -1,6 +1,6 @@
-"""Exception hierarchy for the Orwin SDK Client.
+"""Exception hierarchy for the Efactgate SDK Client.
 
-All SDK exceptions inherit from OrwinSDKError, providing a unified
+All SDK exceptions inherit from EfactgateSDKError, providing a unified
 error handling experience with structured error codes and messages.
 """
 
@@ -24,7 +24,7 @@ class FieldError:
     description: str
 
 
-class OrwinSDKError(Exception):
+class EfactgateSDKError(Exception):
     """Base exception for all SDK errors.
 
     Attributes:
@@ -41,7 +41,7 @@ class OrwinSDKError(Exception):
         return f"{type(self).__name__}(code={self.code!r}, message={self.message!r})"
 
 
-class ConfigurationError(OrwinSDKError):
+class ConfigurationError(EfactgateSDKError):
     """Raised when SDK configuration is invalid.
 
     Examples: missing required parameters, values out of accepted bounds,
@@ -52,7 +52,7 @@ class ConfigurationError(OrwinSDKError):
         super().__init__(code=code, message=message)
 
 
-class AuthenticationError(OrwinSDKError):
+class AuthenticationError(EfactgateSDKError):
     """Raised when authentication fails.
 
     Examples: invalid API key, OAuth2 token refresh failure,
@@ -63,7 +63,7 @@ class AuthenticationError(OrwinSDKError):
         super().__init__(code=code, message=message)
 
 
-class ValidationError(OrwinSDKError):
+class ValidationError(EfactgateSDKError):
     """Raised when local validation of input data fails.
 
     Contains a structured list of field-level errors describing each
@@ -90,7 +90,7 @@ class ValidationError(OrwinSDKError):
         )
 
 
-class ApiError(OrwinSDKError):
+class ApiError(EfactgateSDKError):
     """Raised when the API returns an error response.
 
     Attributes:
@@ -172,7 +172,7 @@ class TransmissionError(ApiError):
         )
 
 
-class TimeoutError(OrwinSDKError):  # noqa: A001
+class TimeoutError(EfactgateSDKError):  # noqa: A001
     """Raised when poll_until_final exceeds its timeout.
 
     Attributes:
@@ -203,7 +203,7 @@ class TimeoutError(OrwinSDKError):  # noqa: A001
         )
 
 
-class NotFoundError(OrwinSDKError):
+class NotFoundError(EfactgateSDKError):
     """Raised when a flux_id is not found or not accessible.
 
     Attributes:
@@ -227,7 +227,7 @@ class NotFoundError(OrwinSDKError):
         )
 
 
-class DeserializationError(OrwinSDKError):
+class DeserializationError(EfactgateSDKError):
     """Raised when JSON deserialization fails.
 
     Attributes:
@@ -261,7 +261,7 @@ __all__ = [
     "DeserializationError",
     "FieldError",
     "NotFoundError",
-    "OrwinSDKError",
+    "EfactgateSDKError",
     "RequestError",
     "TimeoutError",
     "TransmissionError",

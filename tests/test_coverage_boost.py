@@ -21,7 +21,7 @@ import httpx
 import pytest
 import respx
 
-from orwin_sdk.exceptions import (
+from efactgate_sdk.exceptions import (
     AuthenticationError,
     ConfigurationError,
     FieldError,
@@ -29,8 +29,8 @@ from orwin_sdk.exceptions import (
     TransmissionError,
     ValidationError,
 )
-from orwin_sdk.models.enums import FluxStatus, FluxType, InvoiceFormat
-from orwin_sdk.models.invoice import InvoiceSubmission
+from efactgate_sdk.models.enums import FluxStatus, FluxType, InvoiceFormat
+from efactgate_sdk.models.invoice import InvoiceSubmission
 
 
 # ---------------------------------------------------------------------------
@@ -43,11 +43,11 @@ class TestValidationRequiredFields:
 
     def test_empty_content_produces_error(self) -> None:
         """Empty content string triggers validation error."""
-        from orwin_sdk.validation.invoice import validate
+        from efactgate_sdk.validation.invoice import validate
 
         invoice = InvoiceSubmission(
             content="",
-            format=InvoiceFormat.ORWIN_JSON,
+            format=InvoiceFormat.EFACTGATE_JSON,
             target_connector_id="connector-test",
             enterprise_siret="73282932000074",
         )
@@ -57,11 +57,11 @@ class TestValidationRequiredFields:
 
     def test_empty_target_connector_produces_error(self) -> None:
         """Empty target_connector_id triggers validation error."""
-        from orwin_sdk.validation.invoice import validate
+        from efactgate_sdk.validation.invoice import validate
 
         invoice = InvoiceSubmission(
             content='{"data": "test"}',
-            format=InvoiceFormat.ORWIN_JSON,
+            format=InvoiceFormat.EFACTGATE_JSON,
             target_connector_id="",
             enterprise_siret="73282932000074",
         )
@@ -75,11 +75,11 @@ class TestValidationMetadata:
 
     def test_invalid_date_format_in_metadata(self) -> None:
         """Non-ISO 8601 date in metadata triggers error."""
-        from orwin_sdk.validation.invoice import validate
+        from efactgate_sdk.validation.invoice import validate
 
         invoice = InvoiceSubmission(
             content='{"data": "test"}',
-            format=InvoiceFormat.ORWIN_JSON,
+            format=InvoiceFormat.EFACTGATE_JSON,
             target_connector_id="connector-test",
             enterprise_siret="73282932000074",
             metadata={"invoice_date": "15/06/2024"},
@@ -90,11 +90,11 @@ class TestValidationMetadata:
 
     def test_valid_date_in_metadata_no_error(self) -> None:
         """Valid ISO 8601 date in metadata produces no error."""
-        from orwin_sdk.validation.invoice import validate
+        from efactgate_sdk.validation.invoice import validate
 
         invoice = InvoiceSubmission(
             content='{"data": "test"}',
-            format=InvoiceFormat.ORWIN_JSON,
+            format=InvoiceFormat.EFACTGATE_JSON,
             target_connector_id="connector-test",
             enterprise_siret="73282932000074",
             metadata={"invoice_date": "2024-06-15"},
@@ -105,11 +105,11 @@ class TestValidationMetadata:
 
     def test_invalid_amount_format_in_metadata(self) -> None:
         """Non-numeric amount in metadata triggers error."""
-        from orwin_sdk.validation.invoice import validate
+        from efactgate_sdk.validation.invoice import validate
 
         invoice = InvoiceSubmission(
             content='{"data": "test"}',
-            format=InvoiceFormat.ORWIN_JSON,
+            format=InvoiceFormat.EFACTGATE_JSON,
             target_connector_id="connector-test",
             enterprise_siret="73282932000074",
             metadata={"total_ht": "not-a-number"},
@@ -120,11 +120,11 @@ class TestValidationMetadata:
 
     def test_amount_out_of_range_in_metadata(self) -> None:
         """Amount exceeding max range triggers error."""
-        from orwin_sdk.validation.invoice import validate
+        from efactgate_sdk.validation.invoice import validate
 
         invoice = InvoiceSubmission(
             content='{"data": "test"}',
-            format=InvoiceFormat.ORWIN_JSON,
+            format=InvoiceFormat.EFACTGATE_JSON,
             target_connector_id="connector-test",
             enterprise_siret="73282932000074",
             metadata={"total_ht": "9999999999.99"},
@@ -135,11 +135,11 @@ class TestValidationMetadata:
 
     def test_amount_below_min_in_metadata(self) -> None:
         """Amount below minimum triggers error."""
-        from orwin_sdk.validation.invoice import validate
+        from efactgate_sdk.validation.invoice import validate
 
         invoice = InvoiceSubmission(
             content='{"data": "test"}',
-            format=InvoiceFormat.ORWIN_JSON,
+            format=InvoiceFormat.EFACTGATE_JSON,
             target_connector_id="connector-test",
             enterprise_siret="73282932000074",
             metadata={"amount": "0.001"},
@@ -150,11 +150,11 @@ class TestValidationMetadata:
 
     def test_valid_amount_in_metadata_no_error(self) -> None:
         """Valid amount in metadata produces no error."""
-        from orwin_sdk.validation.invoice import validate
+        from efactgate_sdk.validation.invoice import validate
 
         invoice = InvoiceSubmission(
             content='{"data": "test"}',
-            format=InvoiceFormat.ORWIN_JSON,
+            format=InvoiceFormat.EFACTGATE_JSON,
             target_connector_id="connector-test",
             enterprise_siret="73282932000074",
             metadata={"total_ht": "1500.50"},
@@ -165,12 +165,12 @@ class TestValidationMetadata:
 
     def test_validate_invoice_with_amounts(self) -> None:
         """validate_invoice_with_amounts combines basic + amount validation."""
-        from orwin_sdk.validation.amounts import InvoiceAmounts, InvoiceLine
-        from orwin_sdk.validation.invoice import validate_invoice_with_amounts
+        from efactgate_sdk.validation.amounts import InvoiceAmounts, InvoiceLine
+        from efactgate_sdk.validation.invoice import validate_invoice_with_amounts
 
         invoice = InvoiceSubmission(
             content='{"data": "test"}',
-            format=InvoiceFormat.ORWIN_JSON,
+            format=InvoiceFormat.EFACTGATE_JSON,
             target_connector_id="connector-test",
             enterprise_siret="73282932000074",
         )
@@ -202,9 +202,9 @@ class TestOAuth2Authenticator:
     @pytest.mark.asyncio
     async def test_oauth2_get_headers_fetches_token(self) -> None:
         """OAuth2 authenticator fetches token on first call."""
-        from orwin_sdk.auth.oauth2 import OAuth2Authenticator
+        from efactgate_sdk.auth.oauth2 import OAuth2Authenticator
 
-        with patch("orwin_sdk.auth.oauth2.httpx.AsyncClient") as mock_client_class:
+        with patch("efactgate_sdk.auth.oauth2.httpx.AsyncClient") as mock_client_class:
             mock_client = AsyncMock()
             mock_client_class.return_value = mock_client
             mock_client.__aenter__ = AsyncMock(return_value=mock_client)
@@ -233,9 +233,9 @@ class TestOAuth2Authenticator:
     @pytest.mark.asyncio
     async def test_oauth2_refresh_called(self) -> None:
         """OAuth2 authenticator can refresh token."""
-        from orwin_sdk.auth.oauth2 import OAuth2Authenticator
+        from efactgate_sdk.auth.oauth2 import OAuth2Authenticator
 
-        with patch("orwin_sdk.auth.oauth2.httpx.AsyncClient") as mock_client_class:
+        with patch("efactgate_sdk.auth.oauth2.httpx.AsyncClient") as mock_client_class:
             mock_client = AsyncMock()
             mock_client_class.return_value = mock_client
             mock_client.__aenter__ = AsyncMock(return_value=mock_client)
@@ -266,7 +266,7 @@ class TestOAuth2Authenticator:
 # HTTP transport: hooks and 401 refresh
 # ---------------------------------------------------------------------------
 
-MOCK_BASE_URL = "https://api.test.orwin.io/api/v1"
+MOCK_BASE_URL = "https://api.test.efactgate.io/api/v1"
 
 
 class TestHttpTransportHooks:
@@ -276,9 +276,9 @@ class TestHttpTransportHooks:
     @pytest.mark.asyncio
     async def test_hooks_on_response_received(self) -> None:
         """Hooks.on_response_received is called on successful response."""
-        from orwin_sdk.auth.api_key import ApiKeyAuthenticator
-        from orwin_sdk.observability.hooks import EventHooks
-        from orwin_sdk.transport.http_client import HttpTransport
+        from efactgate_sdk.auth.api_key import ApiKeyAuthenticator
+        from efactgate_sdk.observability.hooks import EventHooks
+        from efactgate_sdk.transport.http_client import HttpTransport
 
         respx.get(f"{MOCK_BASE_URL}/status/test-123").mock(
             return_value=httpx.Response(200, json={"status": "ok"})
@@ -305,10 +305,10 @@ class TestHttpTransportHooks:
     @pytest.mark.asyncio
     async def test_hooks_on_retry_triggered(self) -> None:
         """Hooks.on_retry_triggered is called when a retry occurs."""
-        from orwin_sdk.auth.api_key import ApiKeyAuthenticator
-        from orwin_sdk.observability.hooks import EventHooks
-        from orwin_sdk.transport.http_client import HttpTransport
-        from orwin_sdk.transport.retry import RetryPolicy
+        from efactgate_sdk.auth.api_key import ApiKeyAuthenticator
+        from efactgate_sdk.observability.hooks import EventHooks
+        from efactgate_sdk.transport.http_client import HttpTransport
+        from efactgate_sdk.transport.retry import RetryPolicy
 
         route = respx.get(f"{MOCK_BASE_URL}/status/test-retry")
         route.side_effect = [
@@ -345,7 +345,7 @@ class TestStructuredLogger:
 
     def test_logger_respects_level(self) -> None:
         """Logger configured at WARNING doesn't emit INFO messages."""
-        from orwin_sdk.observability.logger import StructuredLogger
+        from efactgate_sdk.observability.logger import StructuredLogger
 
         logger_inst = StructuredLogger(level="WARNING")
         # Logger should be at WARNING level
@@ -353,7 +353,7 @@ class TestStructuredLogger:
 
     def test_logger_emits_at_configured_level(self) -> None:
         """Logger emits at and above configured level."""
-        from orwin_sdk.observability.logger import StructuredLogger
+        from efactgate_sdk.observability.logger import StructuredLogger
 
         logger_inst = StructuredLogger(level="DEBUG")
         assert logger_inst._logger.level == logging.DEBUG
@@ -369,11 +369,11 @@ class TestSerializationEdgeCases:
 
     def test_serialize_model_with_none_optional(self) -> None:
         """Models with None optional fields serialize correctly."""
-        from orwin_sdk.transport.serialization import serialize
+        from efactgate_sdk.transport.serialization import serialize
 
         invoice = InvoiceSubmission(
             content='{"data": "test"}',
-            format=InvoiceFormat.ORWIN_JSON,
+            format=InvoiceFormat.EFACTGATE_JSON,
             target_connector_id="connector-test",
             enterprise_siret="73282932000074",
             metadata=None,
@@ -384,11 +384,11 @@ class TestSerializationEdgeCases:
 
     def test_serialize_model_with_metadata(self) -> None:
         """Models with dict metadata serialize correctly."""
-        from orwin_sdk.transport.serialization import serialize
+        from efactgate_sdk.transport.serialization import serialize
 
         invoice = InvoiceSubmission(
             content='{"data": "test"}',
-            format=InvoiceFormat.ORWIN_JSON,
+            format=InvoiceFormat.EFACTGATE_JSON,
             target_connector_id="connector-test",
             enterprise_siret="73282932000074",
             metadata={"key": "value"},
@@ -399,10 +399,10 @@ class TestSerializationEdgeCases:
 
     def test_deserialize_all_response_models(self) -> None:
         """All response model types can be deserialized."""
-        from orwin_sdk.models.ack import AckResponse
-        from orwin_sdk.models.invoice import BatchResponse, FluxCreatedResponse, ImportReport
-        from orwin_sdk.models.status import FluxStatusResponse
-        from orwin_sdk.transport.serialization import deserialize
+        from efactgate_sdk.models.ack import AckResponse
+        from efactgate_sdk.models.invoice import BatchResponse, FluxCreatedResponse, ImportReport
+        from efactgate_sdk.models.status import FluxStatusResponse
+        from efactgate_sdk.transport.serialization import deserialize
 
         # FluxCreatedResponse
         fcr = deserialize(

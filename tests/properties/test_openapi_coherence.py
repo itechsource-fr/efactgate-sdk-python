@@ -101,8 +101,8 @@ class TestProperty24CrossLanguageCoherence:
 
     @pytest.mark.property
     def test_all_spec_endpoints_have_client_methods(self) -> None:
-        """Every operationId in the OpenAPI spec maps to an OrwinClient method."""
-        from orwin_sdk.client import OrwinClient
+        """Every operationId in the OpenAPI spec maps to an EfactgateClient method."""
+        from efactgate_sdk.client import EfactgateClient
 
         spec = _load_openapi_spec()
         endpoints = _extract_spec_endpoints(spec)
@@ -123,15 +123,15 @@ class TestProperty24CrossLanguageCoherence:
             assert expected_method is not None, (
                 f"Unmapped operationId in spec: {op_id}"
             )
-            assert hasattr(OrwinClient, expected_method), (
-                f"OrwinClient missing method '{expected_method}' "
+            assert hasattr(EfactgateClient, expected_method), (
+                f"EfactgateClient missing method '{expected_method}' "
                 f"for operationId '{op_id}' (endpoint: {endpoint['method']} {endpoint['path']})"
             )
 
     @pytest.mark.property
     def test_all_spec_enums_match_python_enums(self) -> None:
         """Every enum value in the OpenAPI spec exists in the Python StrEnum."""
-        from orwin_sdk.models.enums import (
+        from efactgate_sdk.models.enums import (
             FluxStatus,
             FluxType,
             ImportFormat,
@@ -161,8 +161,8 @@ class TestProperty24CrossLanguageCoherence:
         """Request schemas in the spec have corresponding Python models."""
         import dataclasses
 
-        from orwin_sdk.models.ereporting import EReportingSubmission
-        from orwin_sdk.models.invoice import InvoiceSubmission
+        from efactgate_sdk.models.ereporting import EReportingSubmission
+        from efactgate_sdk.models.invoice import InvoiceSubmission
 
         spec = _load_openapi_spec()
         schemas = spec.get("components", {}).get("schemas", {})
@@ -193,13 +193,13 @@ class TestProperty24CrossLanguageCoherence:
         """Response schemas in the spec have corresponding Python models."""
         import dataclasses
 
-        from orwin_sdk.models.ack import AckResponse
-        from orwin_sdk.models.invoice import (
+        from efactgate_sdk.models.ack import AckResponse
+        from efactgate_sdk.models.invoice import (
             BatchResponse,
             FluxCreatedResponse,
             ImportReport,
         )
-        from orwin_sdk.models.status import FluxStatusResponse
+        from efactgate_sdk.models.status import FluxStatusResponse
 
         spec = _load_openapi_spec()
         schemas = spec.get("components", {}).get("schemas", {})

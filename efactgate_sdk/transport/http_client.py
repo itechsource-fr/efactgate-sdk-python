@@ -1,6 +1,6 @@
 """Async HTTP transport with retry, backoff, and token refresh.
 
-Provides the low-level HTTP layer used by OrwinClient to communicate with
+Provides the low-level HTTP layer used by EfactgateClient to communicate with
 the GW-eFactures API. Handles:
 - Request execution with configurable timeout
 - Retry on transient errors (429, 5xx, network)
@@ -20,20 +20,20 @@ from typing import TYPE_CHECKING, Any
 
 import httpx
 
-from orwin_sdk.exceptions import (
+from efactgate_sdk.exceptions import (
     AuthenticationError,
     RequestError,
     TransmissionError,
 )
-from orwin_sdk.transport.retry import (
+from efactgate_sdk.transport.retry import (
     RetryPolicy,
     is_non_retryable_client_error,
     is_retryable_status,
 )
 
 if TYPE_CHECKING:
-    from orwin_sdk.auth.base import AuthenticatorBase
-    from orwin_sdk.observability.hooks import EventHooks
+    from efactgate_sdk.auth.base import AuthenticatorBase
+    from efactgate_sdk.observability.hooks import EventHooks
 
 logger = logging.getLogger(__name__)
 

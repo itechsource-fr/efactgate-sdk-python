@@ -1,4 +1,4 @@
-"""Integration tests for OrwinClient using respx to mock HTTP.
+"""Integration tests for EfactgateClient using respx to mock HTTP.
 
 These tests exercise the full client → transport → serialization pipeline
 without hitting a real API. They cover the submit/get/poll lifecycle and
@@ -15,21 +15,21 @@ import httpx
 import pytest
 import respx
 
-from orwin_sdk.client import OrwinClient
-from orwin_sdk.exceptions import (
+from efactgate_sdk.client import EfactgateClient
+from efactgate_sdk.exceptions import (
     NotFoundError,
     TransmissionError,
     ValidationError,
 )
-from orwin_sdk.models.enums import FluxStatus, FluxType, InvoiceFormat
-from orwin_sdk.models.invoice import InvoiceSubmission
+from efactgate_sdk.models.enums import FluxStatus, FluxType, InvoiceFormat
+from efactgate_sdk.models.invoice import InvoiceSubmission
 
 
 # ---------------------------------------------------------------------------
 # Fixtures
 # ---------------------------------------------------------------------------
 
-MOCK_BASE_URL = "https://api.test.orwin.io/api/v1"
+MOCK_BASE_URL = "https://api.test.efactgate.io/api/v1"
 VALID_SIRET = "73282932000074"  # Luhn-valid
 
 
@@ -38,7 +38,7 @@ def valid_invoice() -> InvoiceSubmission:
     """Create a valid invoice submission for testing."""
     return InvoiceSubmission(
         content='{"numero": "FA-2024-001", "montant_ttc": "1200.00"}',
-        format=InvoiceFormat.ORWIN_JSON,
+        format=InvoiceFormat.EFACTGATE_JSON,
         target_connector_id="connector-test",
         enterprise_siret=VALID_SIRET,
         flux_type=FluxType.B2B_INVOICE,
@@ -51,7 +51,7 @@ def valid_invoice() -> InvoiceSubmission:
 
 
 class TestSubmitInvoice:
-    """Test OrwinClient.submit_invoice with mocked HTTP."""
+    """Test EfactgateClient.submit_invoice with mocked HTTP."""
 
     @respx.mock
     @pytest.mark.asyncio
@@ -69,7 +69,7 @@ class TestSubmitInvoice:
             )
         )
 
-        async with OrwinClient(
+        async with EfactgateClient(
             base_url=MOCK_BASE_URL,
             api_key="test-key",
         ) as client:
@@ -84,12 +84,12 @@ class TestSubmitInvoice:
         """Invoice with invalid SIRET fails local validation."""
         bad_invoice = InvoiceSubmission(
             content='{"numero": "FA-001"}',
-            format=InvoiceFormat.ORWIN_JSON,
+            format=InvoiceFormat.EFACTGATE_JSON,
             target_connector_id="connector-test",
             enterprise_siret="12345678901234",  # Invalid Luhn
         )
 
-        async with OrwinClient(
+        async with EfactgateClient(
             base_url=MOCK_BASE_URL,
             api_key="test-key",
         ) as client:
@@ -106,7 +106,7 @@ class TestSubmitInvoice:
 
 
 class TestGetStatus:
-    """Test OrwinClient.get_status with mocked HTTP."""
+    """Test EfactgateClient.get_status with mocked HTTP."""
 
     @respx.mock
     @pytest.mark.asyncio
@@ -133,7 +133,7 @@ class TestGetStatus:
             )
         )
 
-        async with OrwinClient(
+        async with EfactgateClient(
             base_url=MOCK_BASE_URL,
             api_key="test-key",
         ) as client:
@@ -156,7 +156,7 @@ class TestGetStatus:
             )
         )
 
-        async with OrwinClient(
+        async with EfactgateClient(
             base_url=MOCK_BASE_URL,
             api_key="test-key",
         ) as client:
@@ -172,7 +172,7 @@ class TestGetStatus:
 
 
 class TestGetAck:
-    """Test OrwinClient.get_ack with mocked HTTP."""
+    """Test EfactgateClient.get_ack with mocked HTTP."""
 
     @respx.mock
     @pytest.mark.asyncio
@@ -190,7 +190,7 @@ class TestGetAck:
             )
         )
 
-        async with OrwinClient(
+        async with EfactgateClient(
             base_url=MOCK_BASE_URL,
             api_key="test-key",
         ) as client:
@@ -209,7 +209,7 @@ class TestGetAck:
             return_value=httpx.Response(204)
         )
 
-        async with OrwinClient(
+        async with EfactgateClient(
             base_url=MOCK_BASE_URL,
             api_key="test-key",
         ) as client:
@@ -229,7 +229,7 @@ class TestGetAck:
             )
         )
 
-        async with OrwinClient(
+        async with EfactgateClient(
             base_url=MOCK_BASE_URL,
             api_key="test-key",
         ) as client:
@@ -243,7 +243,7 @@ class TestGetAck:
 
 
 class TestBatchAndImport:
-    """Test OrwinClient batch and import methods."""
+    """Test EfactgateClient batch and import methods."""
 
     @respx.mock
     @pytest.mark.asyncio
@@ -263,7 +263,7 @@ class TestBatchAndImport:
             )
         )
 
-        async with OrwinClient(
+        async with EfactgateClient(
             base_url=MOCK_BASE_URL,
             api_key="test-key",
         ) as client:
@@ -276,7 +276,7 @@ class TestBatchAndImport:
     @pytest.mark.asyncio
     async def test_submit_batch_empty_raises_validation(self) -> None:
         """Empty batch raises ValidationError."""
-        async with OrwinClient(
+        async with EfactgateClient(
             base_url=MOCK_BASE_URL,
             api_key="test-key",
         ) as client:
@@ -292,7 +292,7 @@ class TestBatchAndImport:
 
 
 class TestPollUntilFinal:
-    """Test OrwinClient.poll_until_final."""
+    """Test EfactgateClient.poll_until_final."""
 
     @respx.mock
     @pytest.mark.asyncio
@@ -332,7 +332,7 @@ class TestPollUntilFinal:
             ),
         ]
 
-        async with OrwinClient(
+        async with EfactgateClient(
             base_url=MOCK_BASE_URL,
             api_key="test-key",
         ) as client:
@@ -346,7 +346,7 @@ class TestPollUntilFinal:
     @pytest.mark.asyncio
     async def test_poll_timeout_raises(self) -> None:
         """Polling beyond timeout raises TimeoutError."""
-        from orwin_sdk.exceptions import TimeoutError
+        from efactgate_sdk.exceptions import TimeoutError
 
         flux_id = "a1b2c3d4-e5f6-7890-abcd-ef1234567890"
 
@@ -364,7 +364,7 @@ class TestPollUntilFinal:
             )
         )
 
-        async with OrwinClient(
+        async with EfactgateClient(
             base_url=MOCK_BASE_URL,
             api_key="test-key",
         ) as client:
@@ -401,7 +401,7 @@ class TestTransportRetry:
             ),
         ]
 
-        async with OrwinClient(
+        async with EfactgateClient(
             base_url=MOCK_BASE_URL,
             api_key="test-key",
             max_retries=3,
@@ -421,7 +421,7 @@ class TestTransportRetry:
             return_value=httpx.Response(503, json={"error": "service unavailable"})
         )
 
-        async with OrwinClient(
+        async with EfactgateClient(
             base_url=MOCK_BASE_URL,
             api_key="test-key",
             max_retries=2,
@@ -439,11 +439,11 @@ class TestTransportRetry:
 
 
 class TestLocalValidation:
-    """Test OrwinClient.validate (synchronous, no network)."""
+    """Test EfactgateClient.validate (synchronous, no network)."""
 
     def test_validate_valid_invoice(self, valid_invoice: InvoiceSubmission) -> None:
         """Valid invoice passes validation."""
-        client = OrwinClient(
+        client = EfactgateClient(
             base_url=MOCK_BASE_URL,
             api_key="test-key",
         )
@@ -454,11 +454,11 @@ class TestLocalValidation:
         """Invalid SIRET produces validation errors."""
         invalid_invoice = InvoiceSubmission(
             content='{"numero": "FA-001"}',
-            format=InvoiceFormat.ORWIN_JSON,
+            format=InvoiceFormat.EFACTGATE_JSON,
             target_connector_id="connector-test",
             enterprise_siret="12345678901111",  # Luhn-invalid
         )
-        client = OrwinClient(
+        client = EfactgateClient(
             base_url=MOCK_BASE_URL,
             api_key="test-key",
         )
@@ -473,13 +473,13 @@ class TestLocalValidation:
 
 
 class TestEReporting:
-    """Test OrwinClient.submit_ereporting."""
+    """Test EfactgateClient.submit_ereporting."""
 
     @respx.mock
     @pytest.mark.asyncio
     async def test_submit_ereporting_success(self) -> None:
         """Successful e-reporting submission returns FluxCreatedResponse."""
-        from orwin_sdk.models.ereporting import EReportingSubmission
+        from efactgate_sdk.models.ereporting import EReportingSubmission
 
         respx.post(f"{MOCK_BASE_URL}/ereporting").mock(
             return_value=httpx.Response(
@@ -494,11 +494,11 @@ class TestEReporting:
 
         submission = EReportingSubmission(
             content='{"period": "2024-06", "total_b2c": "5000.00"}',
-            format=InvoiceFormat.ORWIN_JSON,
+            format=InvoiceFormat.EFACTGATE_JSON,
             enterprise_siret=VALID_SIRET,
         )
 
-        async with OrwinClient(
+        async with EfactgateClient(
             base_url=MOCK_BASE_URL,
             api_key="test-key",
         ) as client:
