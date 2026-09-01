@@ -1,3 +1,3 @@
-"""Efactgate SDK — Client Python pour l'API Universelle GW-eFactures."""
+"""eFactGate SDK — Client Python pour l'API eFactGate."""
 
 __version__ = "0.1.0"

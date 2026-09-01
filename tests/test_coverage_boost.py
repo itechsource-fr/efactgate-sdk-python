@@ -266,7 +266,7 @@ class TestOAuth2Authenticator:
 # HTTP transport: hooks and 401 refresh
 # ---------------------------------------------------------------------------
 
-MOCK_BASE_URL = "https://api.test.efactgate.io/api/v1"
+MOCK_BASE_URL = "https://api.test.efactgate.fr/api/v1"
 
 
 class TestHttpTransportHooks:

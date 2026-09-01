@@ -83,8 +83,8 @@ invalid_max_retries_st = st.one_of(
 
 # Valid URL strategy
 valid_url_st = st.sampled_from([
-    "https://api.efactgate.io/v1",
-    "https://gw-efactures.efactgate.io/api/v1",
+    "https://api.efactgate.fr/v1",
+    "https://api.efactgate.fr/api/v1",
     "http://localhost:8000",
     "https://staging.example.com/api",
 ])
@@ -97,8 +97,8 @@ api_key_st = st.text(
 
 # Env var value strategy for URL
 env_url_st = st.sampled_from([
-    "https://env-api.efactgate.io/v1",
-    "https://env-staging.efactgate.io/v1",
+    "https://env-api.efactgate.fr/v1",
+    "https://env-staging.efactgate.fr/v1",
     "http://env-localhost:9000",
 ])
 
@@ -127,7 +127,7 @@ class TestProperty14BoundsValidation:
     def test_valid_bounds_succeed(self, timeout: float, max_retries: int) -> None:
         """Valid timeout and max_retries values produce a successful config."""
         config = load_config(
-            base_url="https://api.efactgate.io/v1",
+            base_url="https://api.efactgate.fr/v1",
             api_key="test-key-123",
             timeout=timeout,
             max_retries=max_retries,
@@ -143,7 +143,7 @@ class TestProperty14BoundsValidation:
         """Timeout outside [1, 300] raises ConfigurationError."""
         with pytest.raises(ConfigurationError) as exc_info:
             load_config(
-                base_url="https://api.efactgate.io/v1",
+                base_url="https://api.efactgate.fr/v1",
                 api_key="test-key-123",
                 timeout=timeout,
             )
@@ -157,7 +157,7 @@ class TestProperty14BoundsValidation:
         """max_retries outside [0, 10] raises ConfigurationError."""
         with pytest.raises(ConfigurationError) as exc_info:
             load_config(
-                base_url="https://api.efactgate.io/v1",
+                base_url="https://api.efactgate.fr/v1",
                 api_key="test-key-123",
                 max_retries=max_retries,
             )
@@ -211,7 +211,7 @@ class TestProperty15ParameterPriority:
         """Explicit api_key always takes priority over EFACTGATE_API_KEY env var."""
         with patched_env({"EFACTGATE_API_KEY": env_key}):
             config = load_config(
-                base_url="https://api.efactgate.io/v1",
+                base_url="https://api.efactgate.fr/v1",
                 api_key=explicit_key,
             )
             assert isinstance(config.credentials, ApiKeyCredentials)
@@ -257,10 +257,10 @@ class TestProperty15ParameterPriority:
             "EFACTGATE_OAUTH_CLIENT_SECRET": "env-secret",
         }):
             config = load_config(
-                base_url="https://api.efactgate.io/v1",
+                base_url="https://api.efactgate.fr/v1",
                 oauth_client_id=explicit_client_id,
                 oauth_client_secret="explicit-secret",
-                oauth_token_endpoint="https://auth.efactgate.io/token",
+                oauth_token_endpoint="https://auth.efactgate.fr/token",
             )
             assert isinstance(config.credentials, OAuth2Credentials)
             assert config.credentials.client_id == explicit_client_id
@@ -304,13 +304,13 @@ class TestProperty16SandboxIsolation:
     @given(api_key=api_key_st)
     def test_sandbox_ignores_env_url(self, api_key: str) -> None:
         """When sandbox=True, EFACTGATE_API_URL env var is ignored; sandbox URL is used."""
-        with patched_env({"EFACTGATE_API_URL": "https://production.efactgate.io/api/v1"}):
+        with patched_env({"EFACTGATE_API_URL": "https://production.efactgate.fr/api/v1"}):
             config = load_config(
                 api_key=api_key,
                 sandbox=True,
             )
             assert config.base_url == SANDBOX_URL
-            assert config.base_url != "https://production.efactgate.io/api/v1"
+            assert config.base_url != "https://production.efactgate.fr/api/v1"
 
     @pytest.mark.property
     @settings(max_examples=150)

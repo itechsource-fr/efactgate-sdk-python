@@ -14,7 +14,7 @@ from dataclasses import dataclass
 from efactgate_sdk.exceptions import ConfigurationError
 
 # Sandbox URL constant — when sandbox=True, all requests target this URL exclusively.
-SANDBOX_URL: str = "https://sandbox.gw-efactures.efactgate.io/api/v1"
+SANDBOX_URL: str = "https://sandbox.efactgate.fr/api/v1"
 
 # Validation bounds
 MIN_TIMEOUT: float = 1.0
@@ -62,7 +62,7 @@ class ClientConfig:
     Explicit parameters always take priority over environment variables.
 
     Attributes:
-        base_url: Base URL of the GW-eFactures API.
+        base_url: Base URL of the eFactGate API.
         credentials: Authentication credentials (ApiKey or OAuth2).
         timeout: Request timeout in seconds (bounds: [1.0, 300.0]).
         max_retries: Maximum retry attempts (bounds: [0, 10]).

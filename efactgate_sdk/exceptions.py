@@ -1,6 +1,6 @@
-"""Exception hierarchy for the Efactgate SDK Client.
+"""Exception hierarchy for the eFactGate SDK Client.
 
-All SDK exceptions inherit from EfactgateSDKError, providing a unified
+All SDK exceptions inherit from EFactGateSDKError, providing a unified
 error handling experience with structured error codes and messages.
 """
 
@@ -24,7 +24,7 @@ class FieldError:
     description: str
 
 
-class EfactgateSDKError(Exception):
+class EFactGateSDKError(Exception):
     """Base exception for all SDK errors.
 
     Attributes:
@@ -41,7 +41,7 @@ class EfactgateSDKError(Exception):
         return f"{type(self).__name__}(code={self.code!r}, message={self.message!r})"
 
 
-class ConfigurationError(EfactgateSDKError):
+class ConfigurationError(EFactGateSDKError):
     """Raised when SDK configuration is invalid.
 
     Examples: missing required parameters, values out of accepted bounds,
@@ -52,7 +52,7 @@ class ConfigurationError(EfactgateSDKError):
         super().__init__(code=code, message=message)
 
 
-class AuthenticationError(EfactgateSDKError):
+class AuthenticationError(EFactGateSDKError):
     """Raised when authentication fails.
 
     Examples: invalid API key, OAuth2 token refresh failure,
@@ -63,7 +63,7 @@ class AuthenticationError(EfactgateSDKError):
         super().__init__(code=code, message=message)
 
 
-class ValidationError(EfactgateSDKError):
+class ValidationError(EFactGateSDKError):
     """Raised when local validation of input data fails.
 
     Contains a structured list of field-level errors describing each
@@ -90,7 +90,7 @@ class ValidationError(EfactgateSDKError):
         )
 
 
-class ApiError(EfactgateSDKError):
+class ApiError(EFactGateSDKError):
     """Raised when the API returns an error response.
 
     Attributes:
@@ -172,7 +172,7 @@ class TransmissionError(ApiError):
         )
 
 
-class TimeoutError(EfactgateSDKError):  # noqa: A001
+class TimeoutError(EFactGateSDKError):  # noqa: A001
     """Raised when poll_until_final exceeds its timeout.
 
     Attributes:
@@ -203,7 +203,7 @@ class TimeoutError(EfactgateSDKError):  # noqa: A001
         )
 
 
-class NotFoundError(EfactgateSDKError):
+class NotFoundError(EFactGateSDKError):
     """Raised when a flux_id is not found or not accessible.
 
     Attributes:
@@ -227,7 +227,7 @@ class NotFoundError(EfactgateSDKError):
         )
 
 
-class DeserializationError(EfactgateSDKError):
+class DeserializationError(EFactGateSDKError):
     """Raised when JSON deserialization fails.
 
     Attributes:
@@ -261,7 +261,7 @@ __all__ = [
     "DeserializationError",
     "FieldError",
     "NotFoundError",
-    "EfactgateSDKError",
+    "EFactGateSDKError",
     "RequestError",
     "TimeoutError",
     "TransmissionError",

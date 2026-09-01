@@ -245,7 +245,7 @@ class TestOAuth2Deep:
 # HTTP Transport — deeper coverage
 # ===========================================================================
 
-MOCK_URL = "https://api.test.efactgate.io/api/v1"
+MOCK_URL = "https://api.test.efactgate.fr/api/v1"
 
 
 class TestHttpTransportDeep:

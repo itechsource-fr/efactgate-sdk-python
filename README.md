@@ -1,9 +1,9 @@
-# Efactgate SDK — API Universelle GW-eFactures (Python)
+# eFactGate SDK — API Universelle eFactGate (Python)
 
 [![CI](https://github.com/itechsource-fr/efactgate-sdk-python/actions/workflows/ci.yml/badge.svg)](https://github.com/itechsource-fr/efactgate-sdk-python)
 [![PyPI](https://img.shields.io/pypi/v/efactgate-sdk)](https://pypi.org/project/efactgate-sdk/)
 
-Client Python asynchrone pour l'API Universelle GW-eFactures. Encapsule l'authentification,
+Client Python asynchrone pour l'API Universelle eFactGate. Encapsule l'authentification,
 la validation locale, l'envoi de factures, la récupération de statuts/ACK et la gestion
 résiliente des erreurs réseau.
 
@@ -23,11 +23,11 @@ pip install efactgate-sdk
 
 ```python
 import asyncio
-from efactgate_sdk.client import EfactgateClient
+from efactgate_sdk.client import EFactGateClient
 
 async def main() -> None:
-    async with EfactgateClient(
-        base_url="https://api.gw-efactures.efactgate.io/api/v1",
+    async with EFactGateClient(
+        base_url="https://api.efactgate.fr/api/v1",
         api_key="votre-clé-api",
     ) as client:
         # Le SDK inclut automatiquement le header X-API-Key
@@ -41,14 +41,14 @@ asyncio.run(main())
 
 ```python
 import asyncio
-from efactgate_sdk.client import EfactgateClient
+from efactgate_sdk.client import EFactGateClient
 
 async def main() -> None:
-    async with EfactgateClient(
-        base_url="https://api.gw-efactures.efactgate.io/api/v1",
+    async with EFactGateClient(
+        base_url="https://api.efactgate.fr/api/v1",
         oauth_client_id="votre-client-id",
         oauth_client_secret="votre-client-secret",
-        oauth_token_endpoint="https://auth.efactgate.io/oauth2/token",
+        oauth_token_endpoint="https://auth.efactgate.fr/oauth2/token",
     ) as client:
         # Le SDK obtient et rafraîchit le Bearer token automatiquement
         status = await client.get_status("flux-id-existant")
@@ -61,13 +61,13 @@ asyncio.run(main())
 
 ```python
 import asyncio
-from efactgate_sdk.client import EfactgateClient
+from efactgate_sdk.client import EFactGateClient
 from efactgate_sdk.models.invoice import InvoiceSubmission
 from efactgate_sdk.models.enums import ImportFormat
 
 async def envoyer_facture() -> None:
-    async with EfactgateClient(
-        base_url="https://api.gw-efactures.efactgate.io/api/v1",
+    async with EFactGateClient(
+        base_url="https://api.efactgate.fr/api/v1",
         api_key="votre-clé-api",
     ) as client:
         facture = InvoiceSubmission(
@@ -90,11 +90,11 @@ asyncio.run(envoyer_facture())
 
 ```python
 import asyncio
-from efactgate_sdk.client import EfactgateClient
+from efactgate_sdk.client import EFactGateClient
 
 async def consulter_statut() -> None:
-    async with EfactgateClient(
-        base_url="https://api.gw-efactures.efactgate.io/api/v1",
+    async with EFactGateClient(
+        base_url="https://api.efactgate.fr/api/v1",
         api_key="votre-clé-api",
     ) as client:
         flux_id = "a1b2c3d4-e5f6-7890-abcd-ef1234567890"
@@ -117,12 +117,12 @@ asyncio.run(consulter_statut())
 
 ```python
 import asyncio
-from efactgate_sdk.client import EfactgateClient
+from efactgate_sdk.client import EFactGateClient
 from efactgate_sdk.exceptions import TimeoutError
 
 async def attendre_statut_final() -> None:
-    async with EfactgateClient(
-        base_url="https://api.gw-efactures.efactgate.io/api/v1",
+    async with EFactGateClient(
+        base_url="https://api.efactgate.fr/api/v1",
         api_key="votre-clé-api",
     ) as client:
         flux_id = "a1b2c3d4-e5f6-7890-abcd-ef1234567890"
@@ -152,13 +152,13 @@ asyncio.run(attendre_statut_final())
 
 ```python
 import asyncio
-from efactgate_sdk.client import EfactgateClient
+from efactgate_sdk.client import EFactGateClient
 from efactgate_sdk.models.invoice import InvoiceSubmission
 from efactgate_sdk.exceptions import (
     AuthenticationError,
     ConfigurationError,
     NotFoundError,
-    EfactgateSDKError,
+    EFactGateSDKError,
     TimeoutError,
     TransmissionError,
     ValidationError,
@@ -166,8 +166,8 @@ from efactgate_sdk.exceptions import (
 
 async def gestion_erreurs() -> None:
     try:
-        async with EfactgateClient(
-            base_url="https://api.gw-efactures.efactgate.io/api/v1",
+        async with EFactGateClient(
+            base_url="https://api.efactgate.fr/api/v1",
             api_key="votre-clé-api",
         ) as client:
             facture = InvoiceSubmission(
@@ -207,7 +207,7 @@ async def gestion_erreurs() -> None:
         # Configuration invalide (URL, bornes, paramètres manquants)
         print(f"Erreur de configuration : {e.message}")
 
-    except EfactgateSDKError as e:
+    except EFactGateSDKError as e:
         # Catch-all pour toute erreur SDK
         print(f"Erreur SDK : [{e.code}] {e.message}")
 
@@ -249,19 +249,19 @@ En mode sandbox, toutes les requêtes sont redirigées vers l'environnement de t
 Aucune requête ne peut atteindre la production.
 
 ```python
-client = EfactgateClient(
+client = EFactGateClient(
     api_key="test-key",
-    sandbox=True,  # URL forcée vers https://sandbox.gw-efactures.efactgate.io/api/v1
+    sandbox=True,  # URL forcée vers https://sandbox.efactgate.fr/api/v1
 )
 ```
 
 ### Validation locale sans envoi
 
 ```python
-from efactgate_sdk.client import EfactgateClient
+from efactgate_sdk.client import EFactGateClient
 from efactgate_sdk.models.invoice import InvoiceSubmission
 
-client = EfactgateClient(base_url="https://api.efactgate.io/api/v1", api_key="key")
+client = EFactGateClient(base_url="https://api.efactgate.fr/api/v1", api_key="key")
 
 facture = InvoiceSubmission(
     content='{"numero": "FA-2024-001"}',

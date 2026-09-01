@@ -1,4 +1,4 @@
-"""Enumerations for the Efactgate SDK Client models."""
+"""Enumerations for the eFactGate SDK Client models."""
 
 from __future__ import annotations
 

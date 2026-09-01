@@ -1,4 +1,4 @@
-"""Integration tests for EfactgateClient using respx to mock HTTP.
+"""Integration tests for EFactGateClient using respx to mock HTTP.
 
 These tests exercise the full client → transport → serialization pipeline
 without hitting a real API. They cover the submit/get/poll lifecycle and
@@ -15,7 +15,7 @@ import httpx
 import pytest
 import respx
 
-from efactgate_sdk.client import EfactgateClient
+from efactgate_sdk.client import EFactGateClient
 from efactgate_sdk.exceptions import (
     NotFoundError,
     TransmissionError,
@@ -29,7 +29,7 @@ from efactgate_sdk.models.invoice import InvoiceSubmission
 # Fixtures
 # ---------------------------------------------------------------------------
 
-MOCK_BASE_URL = "https://api.test.efactgate.io/api/v1"
+MOCK_BASE_URL = "https://api.test.efactgate.fr/api/v1"
 VALID_SIRET = "73282932000074"  # Luhn-valid
 
 
@@ -51,7 +51,7 @@ def valid_invoice() -> InvoiceSubmission:
 
 
 class TestSubmitInvoice:
-    """Test EfactgateClient.submit_invoice with mocked HTTP."""
+    """Test EFactGateClient.submit_invoice with mocked HTTP."""
 
     @respx.mock
     @pytest.mark.asyncio
@@ -69,7 +69,7 @@ class TestSubmitInvoice:
             )
         )
 
-        async with EfactgateClient(
+        async with EFactGateClient(
             base_url=MOCK_BASE_URL,
             api_key="test-key",
         ) as client:
@@ -89,7 +89,7 @@ class TestSubmitInvoice:
             enterprise_siret="12345678901234",  # Invalid Luhn
         )
 
-        async with EfactgateClient(
+        async with EFactGateClient(
             base_url=MOCK_BASE_URL,
             api_key="test-key",
         ) as client:
@@ -106,7 +106,7 @@ class TestSubmitInvoice:
 
 
 class TestGetStatus:
-    """Test EfactgateClient.get_status with mocked HTTP."""
+    """Test EFactGateClient.get_status with mocked HTTP."""
 
     @respx.mock
     @pytest.mark.asyncio
@@ -133,7 +133,7 @@ class TestGetStatus:
             )
         )
 
-        async with EfactgateClient(
+        async with EFactGateClient(
             base_url=MOCK_BASE_URL,
             api_key="test-key",
         ) as client:
@@ -156,7 +156,7 @@ class TestGetStatus:
             )
         )
 
-        async with EfactgateClient(
+        async with EFactGateClient(
             base_url=MOCK_BASE_URL,
             api_key="test-key",
         ) as client:
@@ -172,7 +172,7 @@ class TestGetStatus:
 
 
 class TestGetAck:
-    """Test EfactgateClient.get_ack with mocked HTTP."""
+    """Test EFactGateClient.get_ack with mocked HTTP."""
 
     @respx.mock
     @pytest.mark.asyncio
@@ -190,7 +190,7 @@ class TestGetAck:
             )
         )
 
-        async with EfactgateClient(
+        async with EFactGateClient(
             base_url=MOCK_BASE_URL,
             api_key="test-key",
         ) as client:
@@ -209,7 +209,7 @@ class TestGetAck:
             return_value=httpx.Response(204)
         )
 
-        async with EfactgateClient(
+        async with EFactGateClient(
             base_url=MOCK_BASE_URL,
             api_key="test-key",
         ) as client:
@@ -229,7 +229,7 @@ class TestGetAck:
             )
         )
 
-        async with EfactgateClient(
+        async with EFactGateClient(
             base_url=MOCK_BASE_URL,
             api_key="test-key",
         ) as client:
@@ -243,7 +243,7 @@ class TestGetAck:
 
 
 class TestBatchAndImport:
-    """Test EfactgateClient batch and import methods."""
+    """Test EFactGateClient batch and import methods."""
 
     @respx.mock
     @pytest.mark.asyncio
@@ -263,7 +263,7 @@ class TestBatchAndImport:
             )
         )
 
-        async with EfactgateClient(
+        async with EFactGateClient(
             base_url=MOCK_BASE_URL,
             api_key="test-key",
         ) as client:
@@ -276,7 +276,7 @@ class TestBatchAndImport:
     @pytest.mark.asyncio
     async def test_submit_batch_empty_raises_validation(self) -> None:
         """Empty batch raises ValidationError."""
-        async with EfactgateClient(
+        async with EFactGateClient(
             base_url=MOCK_BASE_URL,
             api_key="test-key",
         ) as client:
@@ -292,7 +292,7 @@ class TestBatchAndImport:
 
 
 class TestPollUntilFinal:
-    """Test EfactgateClient.poll_until_final."""
+    """Test EFactGateClient.poll_until_final."""
 
     @respx.mock
     @pytest.mark.asyncio
@@ -332,7 +332,7 @@ class TestPollUntilFinal:
             ),
         ]
 
-        async with EfactgateClient(
+        async with EFactGateClient(
             base_url=MOCK_BASE_URL,
             api_key="test-key",
         ) as client:
@@ -364,7 +364,7 @@ class TestPollUntilFinal:
             )
         )
 
-        async with EfactgateClient(
+        async with EFactGateClient(
             base_url=MOCK_BASE_URL,
             api_key="test-key",
         ) as client:
@@ -401,7 +401,7 @@ class TestTransportRetry:
             ),
         ]
 
-        async with EfactgateClient(
+        async with EFactGateClient(
             base_url=MOCK_BASE_URL,
             api_key="test-key",
             max_retries=3,
@@ -421,7 +421,7 @@ class TestTransportRetry:
             return_value=httpx.Response(503, json={"error": "service unavailable"})
         )
 
-        async with EfactgateClient(
+        async with EFactGateClient(
             base_url=MOCK_BASE_URL,
             api_key="test-key",
             max_retries=2,
@@ -439,11 +439,11 @@ class TestTransportRetry:
 
 
 class TestLocalValidation:
-    """Test EfactgateClient.validate (synchronous, no network)."""
+    """Test EFactGateClient.validate (synchronous, no network)."""
 
     def test_validate_valid_invoice(self, valid_invoice: InvoiceSubmission) -> None:
         """Valid invoice passes validation."""
-        client = EfactgateClient(
+        client = EFactGateClient(
             base_url=MOCK_BASE_URL,
             api_key="test-key",
         )
@@ -458,7 +458,7 @@ class TestLocalValidation:
             target_connector_id="connector-test",
             enterprise_siret="12345678901111",  # Luhn-invalid
         )
-        client = EfactgateClient(
+        client = EFactGateClient(
             base_url=MOCK_BASE_URL,
             api_key="test-key",
         )
@@ -473,7 +473,7 @@ class TestLocalValidation:
 
 
 class TestEReporting:
-    """Test EfactgateClient.submit_ereporting."""
+    """Test EFactGateClient.submit_ereporting."""
 
     @respx.mock
     @pytest.mark.asyncio
@@ -498,7 +498,7 @@ class TestEReporting:
             enterprise_siret=VALID_SIRET,
         )
 
-        async with EfactgateClient(
+        async with EFactGateClient(
             base_url=MOCK_BASE_URL,
             api_key="test-key",
         ) as client:

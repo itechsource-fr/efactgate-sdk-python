@@ -52,7 +52,7 @@ client_secret_st = st.text(
 
 # Token endpoint URL strategy
 token_endpoint_st = st.sampled_from([
-    "https://auth.efactgate.io/oauth/token",
+    "https://auth.efactgate.fr/oauth/token",
     "https://id.example.com/token",
     "https://sso.test.local/connect/token",
 ])
@@ -506,7 +506,7 @@ class TestProperty30InvalidCredentialsRaiseAuthError:
             OAuth2Authenticator(
                 client_id=empty_id,
                 client_secret="valid-secret",
-                token_endpoint="https://auth.efactgate.io/token",
+                token_endpoint="https://auth.efactgate.fr/token",
             )
 
         assert exc_info.value.code == "invalid_credentials"
@@ -527,7 +527,7 @@ class TestProperty30InvalidCredentialsRaiseAuthError:
             OAuth2Authenticator(
                 client_id="valid-id",
                 client_secret=empty_secret,
-                token_endpoint="https://auth.efactgate.io/token",
+                token_endpoint="https://auth.efactgate.fr/token",
             )
 
         assert exc_info.value.code == "invalid_credentials"

@@ -1,4 +1,4 @@
-"""JSON serialization and deserialization for Efactgate SDK models.
+"""JSON serialization and deserialization for eFactGate SDK models.
 
 Handles conversion between frozen dataclass instances and JSON strings,
 applying type-specific formatting rules:

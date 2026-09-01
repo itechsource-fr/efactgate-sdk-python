@@ -1,4 +1,4 @@
-"""Invoice-related data models for the Efactgate SDK Client."""
+"""Invoice-related data models for the eFactGate SDK Client."""
 
 from __future__ import annotations
 

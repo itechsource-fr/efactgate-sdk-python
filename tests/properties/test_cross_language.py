@@ -23,7 +23,7 @@ from hypothesis import strategies as st
 
 _SDK_ROOT = Path(__file__).resolve().parents[3]  # sdk/python/tests/properties -> sdk/
 _OPENAPI_DIR = _SDK_ROOT / "openapi"
-_SPEC_FILE = _OPENAPI_DIR / "gw-efactures-openapi.yaml"
+_SPEC_FILE = _OPENAPI_DIR / "efactgate-openapi.yaml"
 _CONFIG_FILE = _OPENAPI_DIR / "generator-config.yaml"
 
 # Supported languages in the generator config

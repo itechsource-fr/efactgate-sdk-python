@@ -1,4 +1,4 @@
-"""Data models for the Efactgate SDK Client.
+"""Data models for the eFactGate SDK Client.
 
 Re-exports all model classes and enumerations for convenient access.
 """

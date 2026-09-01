@@ -1,7 +1,7 @@
 """Async HTTP transport with retry, backoff, and token refresh.
 
-Provides the low-level HTTP layer used by EfactgateClient to communicate with
-the GW-eFactures API. Handles:
+Provides the low-level HTTP layer used by EFactGateClient to communicate with
+the eFactGate API. Handles:
 - Request execution with configurable timeout
 - Retry on transient errors (429, 5xx, network)
 - Exponential backoff with jitter

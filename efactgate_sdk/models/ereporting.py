@@ -1,4 +1,4 @@
-"""E-Reporting submission model for the Efactgate SDK Client."""
+"""E-Reporting submission model for the eFactGate SDK Client."""
 
 from __future__ import annotations
 

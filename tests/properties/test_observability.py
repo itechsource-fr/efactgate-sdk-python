@@ -48,7 +48,7 @@ log_message_st = st.text(
 
 # URL strategies
 base_url_st = st.sampled_from([
-    "https://api.efactgate.io/v1/invoices",
+    "https://api.efactgate.fr/v1/invoices",
     "http://localhost:8080/status/123",
     "https://example.com/path",
 ])

@@ -202,11 +202,11 @@ class TestProperty13HttpErrorClassification:
             http_code=status_code,
             flux_id=None,
             body="error body content",
-            url="https://api.efactgate.io/v1/invoices",
+            url="https://api.efactgate.fr/v1/invoices",
         )
         assert error.http_code == status_code
         assert error.body == "error body content"
-        assert error.url == "https://api.efactgate.io/v1/invoices"
+        assert error.url == "https://api.efactgate.fr/v1/invoices"
         assert len(error.body) <= 1024
 
     @pytest.mark.property

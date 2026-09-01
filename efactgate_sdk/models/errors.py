@@ -1,4 +1,4 @@
-"""Error models for the Efactgate SDK Client.
+"""Error models for the eFactGate SDK Client.
 
 Re-exports FieldError from the exceptions module and provides
 additional error response models.

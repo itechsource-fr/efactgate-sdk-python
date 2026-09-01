@@ -28,7 +28,7 @@ from hypothesis import strategies as st
 
 SDK_ROOT = Path(__file__).resolve().parents[2]  # sdk/python/
 OPENAPI_DIR = SDK_ROOT.parent / "openapi"
-SPEC_FILE = OPENAPI_DIR / "gw-efactures-openapi.yaml"
+SPEC_FILE = OPENAPI_DIR / "efactgate-openapi.yaml"
 GENERATOR_CONFIG = OPENAPI_DIR / "generator-config.yaml"
 SCRIPTS_DIR = SDK_ROOT.parent / "scripts"
 GENERATE_SCRIPT = SCRIPTS_DIR / "generate.sh"
@@ -101,8 +101,8 @@ class TestProperty24CrossLanguageCoherence:
 
     @pytest.mark.property
     def test_all_spec_endpoints_have_client_methods(self) -> None:
-        """Every operationId in the OpenAPI spec maps to an EfactgateClient method."""
-        from efactgate_sdk.client import EfactgateClient
+        """Every operationId in the OpenAPI spec maps to an EFactGateClient method."""
+        from efactgate_sdk.client import EFactGateClient
 
         spec = _load_openapi_spec()
         endpoints = _extract_spec_endpoints(spec)
@@ -123,8 +123,8 @@ class TestProperty24CrossLanguageCoherence:
             assert expected_method is not None, (
                 f"Unmapped operationId in spec: {op_id}"
             )
-            assert hasattr(EfactgateClient, expected_method), (
-                f"EfactgateClient missing method '{expected_method}' "
+            assert hasattr(EFactGateClient, expected_method), (
+                f"EFactGateClient missing method '{expected_method}' "
                 f"for operationId '{op_id}' (endpoint: {endpoint['method']} {endpoint['path']})"
             )
 
@@ -269,7 +269,7 @@ class TestProperty24CrossLanguageCoherence:
         global_config = config.get("global", {})
         input_spec = global_config.get("inputSpec", "")
 
-        assert "gw-efactures-openapi.yaml" in input_spec, (
+        assert "efactgate-openapi.yaml" in input_spec, (
             f"Generator config inputSpec does not reference correct spec: {input_spec}"
         )
 
@@ -521,7 +521,7 @@ class TestProperty26InvalidSpecInterruption:
 
     @pytest.mark.property
     def test_spec_file_is_valid_openapi(self) -> None:
-        """The actual gw-efactures-openapi.yaml is a valid OpenAPI 3.x spec."""
+        """The actual efactgate-openapi.yaml is a valid OpenAPI 3.x spec."""
         spec = _load_openapi_spec()
 
         # Must have required top-level keys

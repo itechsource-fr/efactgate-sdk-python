@@ -1,7 +1,7 @@
-"""EfactgateClient — Point d'entrée principal du SDK API Universelle.
+"""EFactGateClient — Point d'entrée principal du SDK API Universelle.
 
 Assembles authentication, transport, validation, and observability
-into a single async client for the GW-eFactures API.
+into a single async client for the eFactGate API.
 
 Validates: Requirements 3.1, 3.2, 3.3, 3.4, 3.5, 4.1, 4.2, 4.3, 4.4, 4.5, 11.1, 11.3
 """
@@ -55,8 +55,8 @@ _TERMINAL_STATUSES: frozenset[str] = frozenset({
 })
 
 
-class EfactgateClient:
-    """Async client for the GW-eFactures API Universelle.
+class EFactGateClient:
+    """Async client for the eFactGate API Universelle.
 
     Provides methods for:
     - Submitting invoices (B2B) and e-reporting data (B2C)
@@ -67,8 +67,8 @@ class EfactgateClient:
     Supports async context manager for proper resource cleanup.
 
     Example:
-        async with EfactgateClient(
-            base_url="https://api.gw-efactures.efactgate.io/api/v1",
+        async with EFactGateClient(
+            base_url="https://api.efactgate.fr/api/v1",
             api_key="my-api-key",
         ) as client:
             result = await client.submit_invoice(invoice)
@@ -398,7 +398,7 @@ class EfactgateClient:
         """Close the underlying HTTP transport and release resources."""
         await self._transport.close()
 
-    async def __aenter__(self) -> EfactgateClient:
+    async def __aenter__(self) -> EFactGateClient:
         """Enter the async context manager."""
         return self
 
@@ -444,4 +444,4 @@ class EfactgateClient:
         return cast("dict[str, Any]", json.loads(json_str))
 
 
-__all__ = ["EfactgateClient"]
+__all__ = ["EFactGateClient"]
